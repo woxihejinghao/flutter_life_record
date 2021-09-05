@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
 
@@ -85,7 +87,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       ),
     );
   }
-
+  //列表
   Widget todoProject() {
     return SliverToBoxAdapter(
       child: Container(
@@ -93,12 +95,36 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         height: 150,
         child: ListView.builder(
           itemBuilder: (context, index) {
-            return SizedBox(
+            return GestureDetector(
+              child: SizedBox(
               width: 120,
-              child: ToDoProjectCard(),
+              child: index != 0 ? ToDoProjectCard():Card(
+                elevation: 1,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add,color: LRThemeColor.mainColor,),
+                      SizedBox(height: 5,),
+                      Text("创建列表")
+                    ],
+                  )
+                ),
+                shape: LRTool.getBorderRadius(8),
+              ),
+            ),
+            onTap: (){
+              if (index == 0) {
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return ToDoProjectCreatePage();
+                },fullscreenDialog: true));
+              }else{
+
+              }
+            },
             );
           },
-          itemCount: 50,
+          itemCount: 50 + 1,
           scrollDirection: Axis.horizontal,
         ),
       ),
