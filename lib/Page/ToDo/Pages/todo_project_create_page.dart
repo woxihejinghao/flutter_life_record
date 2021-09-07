@@ -58,9 +58,41 @@ class ToDoProjectCreatePage extends StatefulWidget {
 
 class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
   String title = "标题";
-  IconData icons = Icons.add;
+  IconData icons = iconList[0];
   Color iconColor = Colors.black;
   int selectedIndex = 0;
+//是否显示卡片底部阴影
+  double _borderLine0paque = 0;
+  // 滑动监听
+  ScrollController _scrollController = ScrollController();
+  // 输入监听
+  TextEditingController _textEditingController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    //监听滚动事件
+    _scrollController.addListener(() {
+      double temp = _scrollController.offset / 50;
+      if (temp > 1) {
+        temp = 1;
+      } else if (temp < 0) {
+        temp = 0;
+      }
+
+      if (temp != _borderLine0paque) {
+        setState(() {
+          _borderLine0paque = temp;
+        });
+      }
+    });
+
+    //监听输入
+    _textEditingController.addListener(() {
+      setState(() {
+        this.title = _textEditingController.text;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,14 +101,31 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
       appBar: AppBar(
         title: Text("创建列表"),
         elevation: 0,
+        actions: [
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                "创建",
+                style: TextStyle(color: LRThemeColor.mainColor, fontSize: 18),
+              ))
+        ],
       ),
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverPersistentHeader(
-            delegate: ProjectHeaderDelegate(),
+            delegate: ProjectHeaderDelegate(
+                borderOpaque: this._borderLine0paque,
+                iconColor: this.iconColor,
+                title: this.title,
+                icons: this.icons),
             pinned: true,
           ),
-          titleTextField()
+          titleTextField(),
+          titleSection("颜色"),
+          colorSelectSection(),
+          titleSection("图标"),
+          iconSelectSection()
         ],
       ),
     );
@@ -87,31 +136,47 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
       child: Padding(
         padding: EdgeInsets.only(left: 14, right: 14),
         child: TextField(
+          controller: _textEditingController,
+          cursorColor: LRThemeColor.mainColor,
+          maxLength: 6,
           decoration: InputDecoration(
-              hintText: "请输入标题",
-              contentPadding: EdgeInsets.only(left: 8, right: 8)),
+            hintText: "请输入标题(1-6个字符)",
+            contentPadding: EdgeInsets.only(left: 8, right: 8),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget titleSection(String sectionTitle) {
-    return Container(
-      width: 40,
-      margin: EdgeInsets.only(left: 14),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            sectionTitle,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-          ),
-          Container(
-            height: 2,
-            color: LRThemeColor.mainColor,
-          )
-        ],
+    return SliverToBoxAdapter(
+      child: Container(
+        alignment: Alignment.centerLeft,
+        margin: EdgeInsets.only(left: 14, top: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              sectionTitle,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+            ),
+            Container(
+              height: 2,
+              width: 40,
+              color: LRThemeColor.mainColor,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -120,35 +185,78 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
     double spaceing = 20;
     double width = MediaQuery.of(context).size.width;
     width = (width - 5 * spaceing - 28) / 6;
-    return Container(
-      height: width * 2 + 34,
-      margin: EdgeInsets.only(left: 14, right: 14),
-      child: Card(
-        child: GridView.count(
-          padding: EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 8),
-          physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 6,
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
-          childAspectRatio: 1,
-          children: colorList
-              .map((e) => ColorSelectItem(
-                    color: HexColor(e),
-                    radius: width / 2,
-                    isSelected: e == colorList[this.selectedIndex],
-                  ))
-              .toList(),
+
+    return SliverToBoxAdapter(
+      child: Container(
+        height: width * 2 + 34,
+        margin: EdgeInsets.only(left: 14, right: 14, top: 20),
+        child: Card(
+          child: GridView.count(
+            padding: EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 8),
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: 6,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+            childAspectRatio: 1,
+            children: colorList
+                .map((e) => ColorSelectItem(
+                      color: HexColor(e),
+                      radius: width / 2,
+                      callback: () {
+                        setState(() {
+                          this.iconColor = HexColor(e);
+                        });
+                      },
+                    ))
+                .toList(),
+          ),
+          shape: LRTool.getBorderRadius(8),
         ),
-        shape: LRTool.getBorderRadius(8),
       ),
     );
   }
 
   Widget iconSelectSection() {
-    return Container(
-      child: Card(
-        shape: LRTool.getBorderRadius(8),
-      ),
+    double spaceing = 20;
+    double width = MediaQuery.of(context).size.width;
+    width = (width - 5 * spaceing - 28) / 6;
+
+    return SliverToBoxAdapter(
+      child: SafeArea(
+          child: Container(
+        height: width * 6 + 34,
+        margin: EdgeInsets.only(left: 14, right: 14, top: 20),
+        child: Card(
+          child: GridView.count(
+            padding: EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 8),
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: 6,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+            childAspectRatio: 1,
+            children: iconList
+                .map((e) => GestureDetector(
+                      child: Container(
+                        child: Icon(
+                          e,
+                          size: 25,
+                        ),
+                        decoration: BoxDecoration(
+                            color: LRThemeColor.lineColor,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          this.icons = e;
+                        });
+                      },
+                    ))
+                .toList(),
+          ),
+          shape: LRTool.getBorderRadius(8),
+        ),
+      )),
     );
   }
 }
@@ -157,9 +265,13 @@ class ProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String title;
   final IconData icons;
   final Color iconColor;
+  final double borderOpaque;
 
   ProjectHeaderDelegate(
-      {this.title = "", this.icons = Icons.add, this.iconColor = Colors.black});
+      {this.title = "",
+      this.icons = Icons.add,
+      this.iconColor = Colors.black,
+      this.borderOpaque = 0});
 
   @override
   Widget build(
@@ -169,7 +281,7 @@ class ProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(ProjectHeaderDelegate oldDelegate) {
-    return false;
+    return true;
   }
 
   @override
@@ -190,11 +302,12 @@ class ProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
           color: this.iconColor,
         ),
       ),
-
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Colors.red,width: 1))
-      ),
+          color: Colors.white,
+          border: Border(
+              bottom: BorderSide(
+                  color: HexColor("#f1f1f1").withOpacity(this.borderOpaque),
+                  width: 2))),
     );
   }
 }
