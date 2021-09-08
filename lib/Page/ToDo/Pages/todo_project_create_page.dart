@@ -7,9 +7,9 @@ import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
 const List colorList = [
   "#f05b72",
   "#1d953f",
-  "#ffc20e",
+  "#005344",
   "#008792",
-  "#f58220",
+  "#33a3dc",
   "#b69968",
   "#444693",
   "#d71345",
@@ -294,8 +294,8 @@ class ProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
     return Container(
       alignment: Alignment.center,
       child: Container(
-        height: 150,
-        width: 120,
+        height: 120,
+        width: 180,
         child: ToDoProjectCard(
           title: this.title,
           iconData: this.icons,

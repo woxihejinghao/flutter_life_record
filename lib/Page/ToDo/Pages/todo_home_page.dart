@@ -87,41 +87,50 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       ),
     );
   }
+
   //列表
   Widget todoProject() {
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.fromLTRB(14, 8, 14, 8),
-        height: 150,
+        height: 120,
         child: ListView.builder(
           itemBuilder: (context, index) {
             return GestureDetector(
               child: SizedBox(
-              width: 120,
-              child: index != 0 ? ToDoProjectCard():Card(
-                elevation: 1,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add,color: LRThemeColor.mainColor,),
-                      SizedBox(height: 5,),
-                      Text("创建列表")
-                    ],
-                  )
-                ),
-                shape: LRTool.getBorderRadius(8),
+                width: 180,
+                child: index != 0
+                    ? ToDoProjectCard()
+                    : Card(
+                        elevation: 1,
+                        child: Center(
+                            child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add,
+                              color: LRThemeColor.mainColor,
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text("创建列表")
+                          ],
+                        )),
+                        shape: LRTool.getBorderRadius(8),
+                      ),
               ),
-            ),
-            onTap: (){
-              if (index == 0) {
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return ToDoProjectCreatePage();
-                },fullscreenDialog: true));
-              }else{
-
-              }
-            },
+              onTap: () {
+                if (index == 0) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) {
+                            return ToDoProjectCreatePage();
+                          },
+                          fullscreenDialog: true));
+                } else {}
+              },
             );
           },
           itemCount: 50 + 1,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_life_record/Common/lr_color.dart';
 
 class ToDoListCard extends StatefulWidget {
-  const ToDoListCard({Key? key}) : super(key: key);
+  final bool isSelected;
+  const ToDoListCard({Key? key, this.isSelected = false}) : super(key: key);
 
   @override
   _ToDoListCardState createState() => _ToDoListCardState();
@@ -17,8 +19,13 @@ class _ToDoListCardState extends State<ToDoListCard> {
           child: Row(
             children: [
               Icon(
-                Icons.access_alarm,
+                widget.isSelected
+                    ? Icons.check_circle_outline
+                    : Icons.radio_button_unchecked_outlined,
                 size: 25,
+                color: widget.isSelected
+                    ? LRThemeColor.mainColor
+                    : LRThemeColor.lineColor,
               ),
               SizedBox(
                 width: 10,

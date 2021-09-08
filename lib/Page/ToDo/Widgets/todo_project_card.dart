@@ -9,7 +9,7 @@ class ToDoProjectCard extends StatelessWidget {
       {Key? key,
       this.iconData = Icons.add,
       this.title = "标题",
-      this.color = Colors.black})
+      this.color = Colors.orange})
       : super(key: key);
 
   @override
@@ -21,30 +21,40 @@ class ToDoProjectCard extends StatelessWidget {
             Positioned(
               child: Text(
                 this.title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
                 maxLines: 1,
               ),
-              left: 8,
-              top: 8,
-              right: 8,
+              left: 14,
+              top: 10,
+              right: 14,
             ),
             Positioned(
-              child: Icon(
-                this.iconData,
-                color: this.color,
-                size: 30,
+              child: Container(
+                padding: EdgeInsets.all(2),
+                child: Icon(
+                  this.iconData,
+                  color: this.color,
+                  size: 30,
+                ),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
               ),
-              bottom: 8,
-              right: 8,
+              bottom: 10,
+              right: 10,
             )
           ],
         ),
         decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
             gradient: LinearGradient(
-                colors: [Colors.white, LRThemeColor.mainColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0.5, 1.0])),
+                colors: [this.color.withOpacity(0.6), this.color],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                stops: [0.1, 1.0])),
       ),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
