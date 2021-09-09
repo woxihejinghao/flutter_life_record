@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
   const ToDoListCreatePage({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class ToDoListCreatePage extends StatefulWidget {
 }
 
 class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
-bool isPriority = false;
+  bool isPriority = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,12 @@ bool isPriority = false;
         title: Text("创建待办事项"),
         elevation: 0,
         actions: [
-          TextButton(onPressed: (){
-
-          }, child: Text("添加",style: TextStyle(fontSize: 18,color: LRThemeColor.mainColor),))
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                "添加",
+                style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
+              ))
         ],
       ),
       body: SingleChildScrollView(
@@ -36,10 +40,16 @@ bool isPriority = false;
               SizedBox(
                 height: 20,
               ),
-              normalCardItem("列表"),
-              normalCardItem("时间"),
-              SizedBox(height: 20,),
-              switchCardItem()
+              normalCardItem("列表", () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return ToDoProjectSelectPage();
+                }));
+              }),
+              normalCardItem("时间", () {}),
+              SizedBox(
+                height: 20,
+              ),
+              switchCardItem(() {})
             ],
           ),
         ),
@@ -79,57 +89,63 @@ bool isPriority = false;
     );
   }
 
-  Widget normalCardItem(String title) {
-    return Card(
-      shape: LRTool.getBorderRadius(8),
-      child: Container(
-        height: 50,
-        padding: EdgeInsets.only(left: 14, right: 14),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 12,
-              color: LRThemeColor.lightTextColor,
-            )
-          ],
+  Widget normalCardItem(String title, GestureTapCallback? onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        shape: LRTool.getBorderRadius(8),
+        child: Container(
+          height: 50,
+          padding: EdgeInsets.only(left: 14, right: 14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 12,
+                color: LRThemeColor.lightTextColor,
+              )
+            ],
+          ),
         ),
+        elevation: 1,
       ),
-      elevation: 1,
     );
   }
 
-  Widget switchCardItem() {
-    return Card(
-      shape: LRTool.getBorderRadius(8),
-      child: Container(
-        height: 50,
-        padding: EdgeInsets.only(left: 14, right: 14),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "优先",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            CupertinoSwitch(
-              activeColor: LRThemeColor.mainColor,
-              value: this.isPriority,
-              onChanged: (isOn){
+  Widget switchCardItem(GestureTapCallback? onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        shape: LRTool.getBorderRadius(8),
+        child: Container(
+          height: 50,
+          padding: EdgeInsets.only(left: 14, right: 14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "优先",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              CupertinoSwitch(
+                activeColor: LRThemeColor.mainColor,
+                value: this.isPriority,
+                onChanged: (isOn) {
                   setState(() {
                     this.isPriority = isOn;
                   });
-              },
-            )
-          ],
+                },
+              )
+            ],
+          ),
         ),
+        elevation: 1,
       ),
-      elevation: 1,
     );
   }
 }

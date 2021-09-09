@@ -15,7 +15,7 @@ class _ToDoListCardState extends State<ToDoListCard> {
     return Container(
       child: Card(
         child: Padding(
-          padding: EdgeInsets.only(left: 14),
+          padding: EdgeInsets.only(left: 14, bottom: 20, top: 20),
           child: Row(
             children: [
               Icon(

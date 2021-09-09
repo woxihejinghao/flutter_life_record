@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LRThemeColor {
   ///主题颜色
-  static var mainColor = HexColor("#FF8100");
+  static var mainColor = HexColor("#FF4040");
 
   ///字体颜色（999999）
   static var lightTextColor = HexColor("#999999");

@@ -42,7 +42,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
           SliverToBoxAdapter(
             //今日待办
             child: Container(
-              margin: EdgeInsets.only(left: 14),
+              margin: EdgeInsets.only(left: 14, bottom: 14),
               child: Text(
                 "今日待办",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
@@ -53,8 +53,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
               delegate: SliverChildBuilderDelegate((context, index) {
             return Container(
               padding: EdgeInsets.only(left: 14, right: 14),
-              margin: EdgeInsets.only(bottom: 10),
-              height: 80,
+              margin: EdgeInsets.only(bottom: 5),
               child: ToDoListCard(),
             );
           }, childCount: 50)),
