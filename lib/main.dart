@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_home_page.dart';
 
 void main() {
@@ -12,7 +13,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: Colors.white),
+      theme: ThemeData(
+          primaryColor: LRThemeColor.mainColor,
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              iconTheme: IconThemeData(color: Colors.black))),
       home: ToDoHomePage(),
     );
   }
