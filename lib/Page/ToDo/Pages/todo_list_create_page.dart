@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
@@ -45,7 +46,11 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
                   return ToDoProjectSelectPage();
                 }));
               }),
-              normalCardItem("时间", () {}),
+              normalCardItem("时间", () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return ToDoListTimeSelectPage();
+                }));
+              }),
               SizedBox(
                 height: 20,
               ),
