@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_database_tool.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_litst_card.dart';
@@ -15,10 +17,12 @@ class ToDoHomePage extends StatefulWidget {
 
 class _ToDoHomePageState extends State<ToDoHomePage> {
   String timeString = "";
+  List<ToDoProjectModel> _projectList = [];
   @override
   void initState() {
     var now = DateTime.now();
     timeString = "${now.year}年 ${now.month}月 ${now.day}日";
+    refreshProjectList();
     super.initState();
   }
 
@@ -32,7 +36,10 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
             centerTitle: false,
             expandedHeight: 100,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(timeString),
+              title: Text(
+                timeString,
+                style: TextStyle(color: Colors.black),
+              ),
               titlePadding: EdgeInsets.fromLTRB(20, 0, 0, 20),
               centerTitle: false,
               collapseMode: CollapseMode.parallax,
@@ -68,7 +75,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           //创建
           Navigator.push(
               context,
@@ -95,11 +102,19 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         height: 120,
         child: ListView.builder(
           itemBuilder: (context, index) {
+            ToDoProjectModel model = ToDoProjectModel();
+            if (index != 0) {
+              model = _projectList[index - 1];
+            }
             return GestureDetector(
               child: SizedBox(
                 width: 180,
                 child: index != 0
-                    ? ToDoProjectCard()
+                    ? ToDoProjectCard(
+                        color: HexColor(model.colorHex),
+                        iconData: model.getIconData(),
+                        title: model.name,
+                      )
                     : Card(
                         elevation: 1,
                         child: Center(
@@ -122,20 +137,26 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
               onTap: () {
                 if (index == 0) {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) {
-                            return ToDoProjectCreatePage();
-                          },
-                          fullscreenDialog: true));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) {
+                                return ToDoProjectCreatePage();
+                              },
+                              fullscreenDialog: true))
+                      .then((value) => refreshProjectList());
                 } else {}
               },
             );
           },
-          itemCount: 50 + 1,
+          itemCount: _projectList.length + 1,
           scrollDirection: Axis.horizontal,
         ),
       ),
     );
+  }
+
+  refreshProjectList() async {
+    _projectList = await LRDataBaseTool.getInstance().getToDoProjectList();
+    setState(() {});
   }
 }

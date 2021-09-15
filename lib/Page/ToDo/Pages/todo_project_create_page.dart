@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_project_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/color_select_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
+import 'package:oktoast/oktoast.dart';
 
 const List colorList = [
   "#f05b72",
@@ -57,9 +59,12 @@ class ToDoProjectCreatePage extends StatefulWidget {
 }
 
 class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
+  //viewModel
+  ToDoProjectCreateViewModel _viewModel = ToDoProjectCreateViewModel();
   String title = "标题";
   IconData icons = iconList[0];
-  Color iconColor = Colors.black;
+  Color iconColor = HexColor(colorList.first);
+  String _colorHex = colorList.first;
   int selectedIndex = 0;
 //是否显示卡片底部阴影
   double _borderLine0paque = 0;
@@ -103,7 +108,16 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
         elevation: 0,
         actions: [
           TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (_textEditingController.text.isEmpty) {
+                  showToast("请输入名称");
+                  return;
+                }
+                await _viewModel.saveProject(
+                    _textEditingController.text, _colorHex, icons);
+                Navigator.pop(context);
+                showToast("创建成功");
+              },
               child: Text(
                 "创建",
                 style: TextStyle(color: LRThemeColor.mainColor, fontSize: 18),
@@ -181,6 +195,7 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
     );
   }
 
+  ///选择颜色
   Widget colorSelectSection() {
     double spaceing = 20;
     double width = MediaQuery.of(context).size.width;
@@ -205,6 +220,7 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
                       callback: () {
                         setState(() {
                           this.iconColor = HexColor(e);
+                          this._colorHex = e;
                         });
                       },
                     ))

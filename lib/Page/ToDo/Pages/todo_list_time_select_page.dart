@@ -71,11 +71,18 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
   ///选择日期
   selectDate() async {
     DateTime? dateTime = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1800, 1),
-      lastDate: DateTime(9999, 12),
-    );
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1800, 1),
+        lastDate: DateTime(9999, 12),
+        builder: (context, child) {
+          return Theme(
+              data: ThemeData(
+                  cardColor: LRThemeColor.mainColor,
+                  primaryColorLight: LRThemeColor.mainColor,
+                  brightness: Brightness.light),
+              child: child!);
+        });
 
     print("选择的时间$dateTime");
   }
