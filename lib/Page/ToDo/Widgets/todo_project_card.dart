@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_life_record/Common/lr_color.dart';
 
 class ToDoProjectCard extends StatelessWidget {
   final IconData iconData;

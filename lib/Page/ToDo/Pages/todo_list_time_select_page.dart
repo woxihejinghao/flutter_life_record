@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
 
 class ToDoListTimeSelectPage extends StatefulWidget {
@@ -10,60 +12,65 @@ class ToDoListTimeSelectPage extends StatefulWidget {
 }
 
 class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
+  String? _dateString;
+  String? _timeString;
+  bool _cycle = false;
+
+  DateTime? _date;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("时间设置"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop({
+                  "cycle": _cycle,
+                  "date": _date.toString(),
+                  "time": _timeString
+                });
+              },
+              child: Text(
+                "存储",
+                style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
+              ))
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(14, 20, 14, 20),
         child: Column(
           children: [
-            getListItem("日期", "请选择日期", () {
-              selectDate();
-            }),
+            NormalListTile(
+                title: "日期",
+                subTitle: _dateString ?? "",
+                onTap: () {
+                  selectDate();
+                }),
             SizedBox(
               height: 5,
             ),
-            getListItem("时间", "请选择时间", () {
-              selectTime();
-            }),
+            NormalListTile(
+                title: "时间",
+                subTitle: _timeString ?? "",
+                onTap: () {
+                  selectTime();
+                }),
             SizedBox(
               height: 5,
             ),
             SwitchItem(
               title: "重复",
-              isOn: true,
+              isOn: _cycle,
               valueChanged: (isOn) {
-                print("切换$isOn");
+                setState(() {
+                  _cycle = isOn;
+                });
               },
             )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget getListItem(String title, String value, GestureTapCallback? onTap) {
-    return Card(
-      child: ListTile(
-        leading: Text(
-          title,
-          style: TextStyle(fontSize: 18),
-        ),
-        trailing: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(value),
-            SizedBox(
-              width: 5,
-            ),
-            Icon(Icons.keyboard_arrow_right)
-          ],
-        ),
-        onTap: onTap,
       ),
     );
   }
@@ -83,8 +90,12 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
                   brightness: Brightness.light),
               child: child!);
         });
-
-    print("选择的时间$dateTime");
+    if (dateTime != null) {
+      setState(() {
+        _date = dateTime;
+        _dateString = "${dateTime.year}-${dateTime.month}-${dateTime.day}";
+      });
+    }
   }
 
   ///选择时间
@@ -92,7 +103,10 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
     TimeOfDay initialTime = TimeOfDay.now();
     TimeOfDay? result =
         await showTimePicker(context: context, initialTime: initialTime);
-
-    print("选择的时间$result");
+    if (result != null) {
+      setState(() {
+        _timeString = "${result.hour}:${result.minute}";
+      });
+    }
   }
 }

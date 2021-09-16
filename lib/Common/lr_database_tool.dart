@@ -1,4 +1,3 @@
-import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -29,7 +28,7 @@ class LRDataBaseTool {
           "create table todo_project (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,color TEXT,icon TEXT,createTime INTEGER)");
       //代办列表
       await db.execute(
-          "create table todo_list_item (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID TEXT NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER,cycle INTEGER,date TEXT,time TEXT,createTime INTEGER)");
+          "create table todo_list_item (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER,cycle INTEGER,date TEXT,time TEXT,createTime INTEGER)");
     });
 
     return database!;
@@ -43,12 +42,27 @@ class LRDataBaseTool {
     return model;
   }
 
-  //查询数据
+  ///查询数据
   Future<List<ToDoProjectModel>> getToDoProjectList() async {
     var db = await openDB();
     var maps = await db.query(tableToDoProject,
         columns: ["id", "name", "color", "icon", "createTime"]);
 
     return maps.map((e) => ToDoProjectModel.fromMap(e)).toList();
+  }
+
+  ///查询列表（支持ID）
+  Future<ToDoProjectModel?> getToDoProject(int projectID) async {
+    var db = await openDB();
+    var maps = await db.query(tableToDoProject,
+        columns: ["id", "name", "color", "icon", "createTime"],
+        where: "id = ?",
+        whereArgs: [projectID]);
+
+    if (maps.isEmpty) {
+      return null;
+    } else {
+      return ToDoProjectModel.fromMap(maps.first);
+    }
   }
 }

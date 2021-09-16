@@ -1,19 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_database_tool.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
-  const ToDoListCreatePage({Key? key}) : super(key: key);
+  final ToDoListItemModel? model;
+  const ToDoListCreatePage({Key? key, this.model}) : super(key: key);
 
   @override
   _ToDoListCreatePageState createState() => _ToDoListCreatePageState();
 }
 
 class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
-  bool isPriority = false;
+  ToDoListItemModel? _itemModel;
+
+  String? _projectName;
+
+  late TextEditingController _titleEditingController;
+  late TextEditingController _remarkEditingController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.model == null) {
+      _itemModel = ToDoListItemModel();
+    } else {
+      _itemModel = widget.model;
+    }
+    _titleEditingController = TextEditingController(text: _itemModel?.name);
+    _remarkEditingController = TextEditingController(text: _itemModel?.remark);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +64,37 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
               SizedBox(
                 height: 20,
               ),
-              normalCardItem("列表", () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ToDoProjectSelectPage();
-                }));
-              }),
-              normalCardItem("时间", () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ToDoListTimeSelectPage();
-                }));
-              }),
+              NormalListTile(
+                title: "列表",
+                subTitle: _projectName ?? "",
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ToDoProjectSelectPage();
+                  })).then((value) {
+                    if (value is ToDoProjectModel) {
+                      ToDoProjectModel model = value;
+                      _itemModel?.projectID = model.id;
+                      _projectName = model.name;
+                      setState(() {});
+                    }
+                  });
+                },
+              ),
+              NormalListTile(
+                title: "时间",
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ToDoListTimeSelectPage();
+                  })).then((value) {
+                    if (value is Map<String, Object?>) {
+                      Map<String, Object?> map = value;
+                      _itemModel?.date = map["date"] as String?;
+                      _itemModel?.time = map["time"] as String?;
+                      _itemModel?.cycle = map["cycle"] as bool?;
+                    }
+                  });
+                },
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -68,6 +112,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextField(
+            controller: _titleEditingController,
             maxLines: 1,
             style: TextStyle(fontSize: 18),
             decoration: InputDecoration(
@@ -80,6 +125,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
             color: LRThemeColor.lineColor,
           ),
           TextField(
+            controller: _remarkEditingController,
             minLines: 5,
             maxLines: 5,
             style: TextStyle(fontSize: 18),
@@ -91,34 +137,6 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
         ],
       ),
       shape: LRTool.getBorderRadius(8),
-    );
-  }
-
-  Widget normalCardItem(String title, GestureTapCallback? onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Card(
-        shape: LRTool.getBorderRadius(8),
-        child: Container(
-          height: 50,
-          padding: EdgeInsets.only(left: 14, right: 14),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 12,
-                color: LRThemeColor.lightTextColor,
-              )
-            ],
-          ),
-        ),
-        elevation: 1,
-      ),
     );
   }
 
@@ -139,10 +157,10 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
               ),
               CupertinoSwitch(
                 activeColor: LRThemeColor.mainColor,
-                value: this.isPriority,
+                value: _itemModel?.preferential ?? false,
                 onChanged: (isOn) {
                   setState(() {
-                    this.isPriority = isOn;
+                    _itemModel?.preferential = isOn;
                   });
                 },
               )
@@ -152,5 +170,15 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
         elevation: 1,
       ),
     );
+  }
+
+  //检查列表
+  checkProjectName(int projectID) async {
+    var model = await LRDataBaseTool.getInstance().getToDoProject(projectID);
+    if (model != null) {
+      setState(() {
+        _projectName = model.name;
+      });
+    }
   }
 }

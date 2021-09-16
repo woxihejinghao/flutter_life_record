@@ -2,8 +2,8 @@ final String tableToDoList = "todo_list_item";
 
 class ToDoListItemModel {
   late int id;
-  late String name;
-  late String projectID;
+  String? name;
+  late int projectID;
   late int createTime;
   String? remark;
   String? date;
@@ -33,7 +33,7 @@ class ToDoListItemModel {
   ToDoListItemModel.fromeMap(Map<String, Object?> map) {
     id = map["id"] as int;
     name = map["name"] as String;
-    projectID = map["projectID"] as String;
+    projectID = map["projectID"] as int;
     remark = map["remark"] as String?;
     preferential = map["preferential"] == 1;
     cycle = map["cycle"] == 1;

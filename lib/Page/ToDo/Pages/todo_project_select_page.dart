@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_database_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
 
 class ToDoProjectSelectPage extends StatefulWidget {
@@ -10,6 +12,14 @@ class ToDoProjectSelectPage extends StatefulWidget {
 }
 
 class _ToDoProjectSelectPageState extends State<ToDoProjectSelectPage> {
+  List<ToDoProjectModel> _projectList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    requestProjectList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +35,26 @@ class _ToDoProjectSelectPageState extends State<ToDoProjectSelectPage> {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10),
           itemBuilder: (context, index) {
-            return ToDoProjectCard(
-              color: LRThemeColor.mainColor,
+            ToDoProjectModel model = _projectList[index];
+            return GestureDetector(
+              child: ToDoProjectCard(
+                color: HexColor(model.colorHex),
+                title: model.name,
+                iconData: model.getIconData(),
+              ),
+              onTap: () {
+                Navigator.of(context).pop(model);
+              },
             );
           },
-          itemCount: 50,
+          itemCount: _projectList.length,
         ),
       ),
     );
+  }
+
+  requestProjectList() async {
+    _projectList = await LRDataBaseTool.getInstance().getToDoProjectList();
+    setState(() {});
   }
 }
