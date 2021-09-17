@@ -10,4 +10,8 @@ class ToDoProjectCreateViewModel {
     model.setIcon(icon);
     await LRDataBaseTool.getInstance().insertToDoProject(model);
   }
+
+  updateProject(ToDoProjectModel model) async {
+    await LRDataBaseTool.getInstance().updateToDoProject(model);
+  }
 }

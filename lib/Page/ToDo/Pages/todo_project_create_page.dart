@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
+import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_home_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_project_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/color_select_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
 
 const List colorList = [
   "#f05b72",
@@ -52,7 +55,8 @@ const List iconList = [
 ];
 
 class ToDoProjectCreatePage extends StatefulWidget {
-  const ToDoProjectCreatePage({Key? key}) : super(key: key);
+  final ToDoProjectModel? model;
+  const ToDoProjectCreatePage({Key? key, this.model}) : super(key: key);
 
   @override
   _ToDoProjectCreatePageState createState() => _ToDoProjectCreatePageState();
@@ -65,7 +69,6 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
   IconData icons = iconList[0];
   Color iconColor = HexColor(colorList.first);
   String _colorHex = colorList.first;
-  int selectedIndex = 0;
 //是否显示卡片底部阴影
   double _borderLine0paque = 0;
   // 滑动监听
@@ -75,6 +78,15 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.model != null) {
+      var model = widget.model!;
+      title = model.name;
+      icons = model.getIconData();
+      iconColor = HexColor(model.colorHex);
+      _colorHex = model.colorHex;
+      _textEditingController.text = model.name;
+    }
     //监听滚动事件
     _scrollController.addListener(() {
       double temp = _scrollController.offset / 50;
@@ -104,22 +116,13 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("创建列表"),
+        title: Text(widget.model == null ? "创建列表" : "名称和外观"),
         elevation: 0,
         actions: [
           TextButton(
-              onPressed: () async {
-                if (_textEditingController.text.isEmpty) {
-                  showToast("请输入名称");
-                  return;
-                }
-                await _viewModel.saveProject(
-                    _textEditingController.text, _colorHex, icons);
-                Navigator.pop(context);
-                showToast("创建成功");
-              },
+              onPressed: onPressedButton,
               child: Text(
-                "创建",
+                widget.model == null ? "创建" : "保存",
                 style: TextStyle(color: LRThemeColor.mainColor, fontSize: 18),
               ))
         ],
@@ -232,6 +235,7 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
     );
   }
 
+  ///图标选择
   Widget iconSelectSection() {
     double spaceing = 20;
     double width = MediaQuery.of(context).size.width;
@@ -274,6 +278,29 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
         ),
       )),
     );
+  }
+
+  ///右上角按钮点击
+  onPressedButton() async {
+    if (_textEditingController.text.isEmpty) {
+      showToast("请输入名称");
+      return;
+    }
+
+    if (widget.model != null) {
+      var model = widget.model!;
+      model.name = _textEditingController.text;
+      model.colorHex = _colorHex;
+      model.setIcon(icons);
+      await _viewModel.updateProject(model);
+    } else {
+      await _viewModel.saveProject(
+          _textEditingController.text, _colorHex, icons);
+    }
+
+    Provider.of<ToDoHomeViewModel>(context, listen: false).refreshProjectList();
+    Navigator.pop(context);
+    showToast(widget.model == null ? "创建成功" : "修改成功");
   }
 }
 

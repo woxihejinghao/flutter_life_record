@@ -1,3 +1,4 @@
+import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -42,6 +43,13 @@ class LRDataBaseTool {
     return model;
   }
 
+  //更新待办列表
+  Future updateToDoProject(ToDoProjectModel model) async {
+    var db = await openDB();
+    await db.update(tableToDoProject, model.toMap(),
+        where: "id = ?", whereArgs: [model.id]);
+  }
+
   ///查询数据
   Future<List<ToDoProjectModel>> getToDoProjectList() async {
     var db = await openDB();
@@ -64,5 +72,38 @@ class LRDataBaseTool {
     } else {
       return ToDoProjectModel.fromMap(maps.first);
     }
+  }
+
+  ///插入待办事项
+  Future<ToDoListItemModel> insertToDoItem(ToDoListItemModel model) async {
+    var db = await openDB();
+    try {
+      model.id = await db.insert(tableToDoList, model.toMap());
+    } catch (e) {
+      print("插入数据失败");
+    }
+
+    return model;
+  }
+
+  ///查询待办列表
+  Future<List<ToDoListItemModel>> getToDoList(
+      int? id, int? projectID, DateTime? time) async {
+    String? whereStr;
+    List<Object?>? whereArgs;
+
+    if (id != null) {
+      whereStr = "id = ?";
+      whereArgs = [id];
+    } else if (projectID != null) {
+      whereStr = "projectID = ?";
+      whereArgs = [projectID];
+    }
+
+    var db = await openDB();
+    var maps =
+        await db.query(tableToDoList, where: whereStr, whereArgs: whereArgs);
+
+    return maps.map((e) => ToDoListItemModel.fromeMap(e)).toList();
   }
 }

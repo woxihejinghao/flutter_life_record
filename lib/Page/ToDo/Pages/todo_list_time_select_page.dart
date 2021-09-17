@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
-import 'package:flutter_life_record/Common/lr_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
 

@@ -7,7 +7,11 @@ import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
+import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_home_viewModel.dart';
+import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_item_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
   final ToDoListItemModel? model;
@@ -18,9 +22,11 @@ class ToDoListCreatePage extends StatefulWidget {
 }
 
 class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
-  ToDoListItemModel? _itemModel;
+  late ToDoListItemModel _itemModel;
 
-  String? _projectName;
+  ToDoProjectModel? _projectModel;
+
+  ToDoItemCreateViewModel _viewModel = ToDoItemCreateViewModel();
 
   late TextEditingController _titleEditingController;
   late TextEditingController _remarkEditingController;
@@ -28,14 +34,16 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
   @override
   void initState() {
     super.initState();
-
+    _projectModel = Provider.of<ToDoHomeViewModel>(context, listen: false)
+        .projectList
+        .first;
     if (widget.model == null) {
       _itemModel = ToDoListItemModel();
     } else {
-      _itemModel = widget.model;
+      _itemModel = widget.model!;
     }
-    _titleEditingController = TextEditingController(text: _itemModel?.name);
-    _remarkEditingController = TextEditingController(text: _itemModel?.remark);
+    _titleEditingController = TextEditingController(text: _itemModel.name);
+    _remarkEditingController = TextEditingController(text: _itemModel.remark);
   }
 
   @override
@@ -46,7 +54,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
         elevation: 0,
         actions: [
           TextButton(
-              onPressed: () {},
+              onPressed: saveToDoItem,
               child: Text(
                 "添加",
                 style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
@@ -66,15 +74,13 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
               ),
               NormalListTile(
                 title: "列表",
-                subTitle: _projectName ?? "",
+                subTitle: _projectModel?.name ?? "",
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return ToDoProjectSelectPage();
                   })).then((value) {
                     if (value is ToDoProjectModel) {
-                      ToDoProjectModel model = value;
-                      _itemModel?.projectID = model.id;
-                      _projectName = model.name;
+                      _projectModel = value;
                       setState(() {});
                     }
                   });
@@ -88,9 +94,9 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
                   })).then((value) {
                     if (value is Map<String, Object?>) {
                       Map<String, Object?> map = value;
-                      _itemModel?.date = map["date"] as String?;
-                      _itemModel?.time = map["time"] as String?;
-                      _itemModel?.cycle = map["cycle"] as bool?;
+                      _itemModel.date = map["date"] as String?;
+                      _itemModel.time = map["time"] as String?;
+                      _itemModel.cycle = map["cycle"] as bool?;
                     }
                   });
                 },
@@ -157,10 +163,10 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
               ),
               CupertinoSwitch(
                 activeColor: LRThemeColor.mainColor,
-                value: _itemModel?.preferential ?? false,
+                value: _itemModel.preferential ?? false,
                 onChanged: (isOn) {
                   setState(() {
-                    _itemModel?.preferential = isOn;
+                    _itemModel.preferential = isOn;
                   });
                 },
               )
@@ -172,13 +178,15 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
     );
   }
 
-  //检查列表
-  checkProjectName(int projectID) async {
-    var model = await LRDataBaseTool.getInstance().getToDoProject(projectID);
-    if (model != null) {
-      setState(() {
-        _projectName = model.name;
-      });
+  ///创建待办
+  saveToDoItem() async {
+    if (_itemModel.name == null) {
+      showToast("请输入标题");
+      return;
     }
+
+    await _viewModel.saveToDoItem(_itemModel);
+    Navigator.of(context).pop();
+    showToast("创建成功");
   }
 }
