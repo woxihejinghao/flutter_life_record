@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
-import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
 
 class ToDoListTimeSelectPage extends StatefulWidget {
@@ -14,6 +13,7 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
   String? _dateString;
   String? _timeString;
   bool _cycle = false;
+
 
   DateTime? _date;
 
@@ -32,7 +32,7 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
                 });
               },
               child: Text(
-                "存储",
+                "保存",
                 style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
               ))
         ],
@@ -41,25 +41,34 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
         padding: EdgeInsets.fromLTRB(14, 20, 14, 20),
         child: Column(
           children: [
-            NormalListTile(
-                title: "日期",
-                subTitle: _dateString ?? "",
-                onTap: () {
+
+            SwitchItem(title: "日期",subTitle: _dateString,isOn: _dateString != null,valueChanged: (isOn){
+                if (isOn) {
                   selectDate();
-                }),
+                }else{
+                  setState(() {
+                    _dateString = null;
+                  });
+                }
+            },),
             SizedBox(
-              height: 5,
+              height: 2,
             ),
-            NormalListTile(
-                title: "时间",
-                subTitle: _timeString ?? "",
-                onTap: () {
-                  selectTime();
-                }),
+            SwitchItem(title: "时间",subTitle: _timeString,isOn: _timeString != null,valueChanged: (isOn){
+                  if (isOn) {
+                    selectTime();
+                  }else{
+                    setState(() {
+                      _timeString = null;
+                    });
+                  }
+            },),
             SizedBox(
-              height: 5,
+              height: 15,
             ),
-            SwitchItem(
+            Offstage(
+              offstage: _dateString == null,
+              child: SwitchItem(
               title: "重复",
               isOn: _cycle,
               valueChanged: (isOn) {
@@ -67,6 +76,7 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
                   _cycle = isOn;
                 });
               },
+            ),
             )
           ],
         ),

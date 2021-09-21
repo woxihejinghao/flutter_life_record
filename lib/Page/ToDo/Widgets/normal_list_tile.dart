@@ -13,8 +13,9 @@ class NormalListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: LRTool.getBorderRadius(8),
       child: ListTile(
-        leading: Text(
+        title: Text(
           title,
           style: TextStyle(fontSize: 18),
         ),
@@ -33,7 +34,6 @@ class NormalListTile extends StatelessWidget {
             Icon(Icons.keyboard_arrow_right)
           ],
         ),
-        shape: LRTool.getBorderRadius(8),
         onTap: onTap,
       ),
     );

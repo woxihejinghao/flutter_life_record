@@ -8,6 +8,7 @@ import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_home_viewModel.dart
 import 'package:flutter_life_record/Page/ToDo/Widgets/consumer_widget.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 class ToDoHomePage extends StatefulWidget {
@@ -84,13 +85,18 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         builder: (context, value, child) {
           return FloatingActionButton(
             onPressed: () async {
+
+              if (!value) {
+                showToast("请创建列表");
+                return;
+              }
               //创建
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) {
                         return ConsumerSingleWidget<ToDoHomeViewModel>(
-                            child: ToDoListCreatePage());
+                            child: ToDoListCreatePage(model: null,));
                       },
                       fullscreenDialog: true));
             },
