@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
-import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_home_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_project_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/color_select_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
+import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
@@ -75,6 +76,8 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
   ScrollController _scrollController = ScrollController();
   // 输入监听
   TextEditingController _textEditingController = TextEditingController();
+
+  final controller = Get.find<ToDoHomeController>();
   @override
   void initState() {
     super.initState();
@@ -297,8 +300,7 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
       await _viewModel.saveProject(
           _textEditingController.text, _colorHex, icons);
     }
-
-    Provider.of<ToDoHomeViewModel>(context, listen: false).refreshProjectList();
+    controller.refreshProjectList();
     Navigator.pop(context);
     showToast(widget.model == null ? "创建成功" : "修改成功");
   }

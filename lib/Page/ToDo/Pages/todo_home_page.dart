@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
+import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
-import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_home_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/consumer_widget.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/instance_manager.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class ToDoHomePage extends StatefulWidget {
   const ToDoHomePage({Key? key}) : super(key: key);
@@ -20,11 +23,12 @@ class ToDoHomePage extends StatefulWidget {
 
 class _ToDoHomePageState extends State<ToDoHomePage> {
   String timeString = "";
-
+  final controller = Get.put(ToDoHomeController());
   @override
   void initState() {
     var now = DateTime.now();
     timeString = "${now.year}年 ${now.month}月 ${now.day}日";
+
     super.initState();
   }
 
@@ -76,36 +80,49 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
           )
         ],
       ),
-      floatingActionButton: Selector<ToDoHomeViewModel, bool>(
-        selector: (context, provider) => provider.projectList.isNotEmpty,
-        child: Icon(
-          Icons.add,
-          size: 25,
-        ),
-        builder: (context, value, child) {
-          return FloatingActionButton(
-            onPressed: () async {
 
-              if (!value) {
-                showToast("请创建列表");
-                return;
-              }
-              //创建
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) {
-                        return ConsumerSingleWidget<ToDoHomeViewModel>(
-                            child: ToDoListCreatePage(model: null,));
-                      },
-                      fullscreenDialog: true));
-            },
-            child: child,
-            backgroundColor:
-                value ? LRThemeColor.mainColor : LRThemeColor.lightTextColor,
-          );
-        },
-      ),
+      floatingActionButton: Obx(() => FloatingActionButton(
+            onPressed: () => Get.to(() => ToDoListCreatePage()),
+            child: Icon(
+              Icons.add,
+              size: 25,
+            ),
+            backgroundColor: controller.projectList.isNotEmpty
+                ? LRThemeColor.mainColor
+                : LRThemeColor.lightTextColor,
+          )),
+
+      // floatingActionButton: Selector<ToDoHomeViewModel, bool>(
+      //   selector: (context, provider) => provider.projectList.isNotEmpty,
+      //   child: Icon(
+      //     Icons.add,
+      //     size: 25,
+      //   ),
+      //   builder: (context, value, child) {
+      //     return FloatingActionButton(
+      //       onPressed: () async {
+      //         if (!value) {
+      //           showToast("请创建列表");
+      //           return;
+      //         }
+      //         //创建
+      //         Navigator.push(
+      //             context,
+      //             MaterialPageRoute(
+      //                 builder: (context) {
+      //                   return ConsumerSingleWidget<ToDoHomeViewModel>(
+      //                       child: ToDoListCreatePage(
+      //                     model: null,
+      //                   ));
+      //                 },
+      //                 fullscreenDialog: true));
+      //       },
+      //       child: child,
+      //       backgroundColor:
+      //           value ? LRThemeColor.mainColor : LRThemeColor.lightTextColor,
+      //     );
+      //   },
+      // ),
     );
   }
 
@@ -115,13 +132,11 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       child: Container(
         margin: EdgeInsets.fromLTRB(14, 8, 14, 8),
         height: 120,
-        child: Selector<ToDoHomeViewModel, List<ToDoProjectModel>>(
-          builder: (context, data, child) {
-            return ListView.builder(
+        child: Obx(() => ListView.builder(
               itemBuilder: (context, index) {
                 ToDoProjectModel? model;
                 if (index != 0) {
-                  model = data[index - 1];
+                  model = controller.projectList[index - 1];
                 }
                 return GestureDetector(
                   child: SizedBox(
@@ -152,30 +167,16 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
                           ),
                   ),
                   onTap: () {
-                    pushToProjectPage(model);
+                    Get.to(ToDoProjectCreatePage(
+                      model: model,
+                    ));
                   },
                 );
               },
-              itemCount: data.length + 1,
+              itemCount: controller.projectList.length + 1,
               scrollDirection: Axis.horizontal,
-            );
-          },
-          selector: (context, provider) => provider.projectList,
-        ),
+            )),
       ),
     );
-  }
-
-  pushToProjectPage(ToDoProjectModel? model) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) {
-              return ConsumerSingleWidget<ToDoHomeViewModel>(
-                  child: ToDoProjectCreatePage(
-                model: model,
-              ));
-            },
-            fullscreenDialog: model == null));
   }
 }
