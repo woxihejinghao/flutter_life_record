@@ -21,7 +21,7 @@ class ToDoHomeController extends GetxController {
 
   //刷新代办列表
   refreshItemList() async {
-    var list = await LRDataBaseTool.getInstance().getToDoList(null, null, null);
+    var list = await LRDataBaseTool.getInstance().getToDoList();
     itemList.assignAll(list);
   }
 }

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 
-class ToDoListCard extends StatefulWidget {
+class ToDoListCard extends StatelessWidget {
+  final ToDoListItemModel? model;
   final bool isSelected;
-  const ToDoListCard({Key? key, this.isSelected = false}) : super(key: key);
+  const ToDoListCard({Key? key, this.model, this.isSelected = false})
+      : super(key: key);
 
-  @override
-  _ToDoListCardState createState() => _ToDoListCardState();
-}
-
-class _ToDoListCardState extends State<ToDoListCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,11 +17,11 @@ class _ToDoListCardState extends State<ToDoListCard> {
           child: Row(
             children: [
               Icon(
-                widget.isSelected
+                this.isSelected
                     ? Icons.check_circle_outline
                     : Icons.radio_button_unchecked_outlined,
                 size: 25,
-                color: widget.isSelected
+                color: this.isSelected
                     ? LRThemeColor.mainColor
                     : LRThemeColor.lineColor,
               ),
@@ -31,7 +29,7 @@ class _ToDoListCardState extends State<ToDoListCard> {
                 width: 10,
               ),
               Text(
-                "标题",
+                this.model?.name ?? "",
                 style: TextStyle(fontSize: 20),
               )
             ],

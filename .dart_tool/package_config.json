@@ -86,12 +86,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "nested",
-      "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/nested-1.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "oktoast",
       "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/oktoast-3.1.1",
       "packageUri": "lib/",
@@ -100,12 +94,6 @@
     {
       "name": "path",
       "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path-1.8.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "provider",
-      "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/provider-6.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -188,7 +176,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-10-08T07:48:03.836496Z",
+  "generated": "2021-10-09T06:51:55.757299Z",
   "generator": "pub",
   "generatorVersion": "2.14.0"
 }

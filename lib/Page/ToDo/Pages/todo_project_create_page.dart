@@ -8,7 +8,6 @@ import 'package:flutter_life_record/Page/ToDo/Widgets/color_select_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
 import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:provider/provider.dart';
 
 const List colorList = [
   "#f05b72",

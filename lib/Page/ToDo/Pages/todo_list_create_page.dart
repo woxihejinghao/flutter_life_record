@@ -12,7 +12,6 @@ import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
 import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:provider/provider.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
   final ToDoListItemModel? model;
@@ -173,6 +172,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
     }
 
     await _viewModel.saveToDoItem(_itemModel);
+    controller.refreshItemList();
     Navigator.of(context).pop();
     showToast("创建成功");
   }

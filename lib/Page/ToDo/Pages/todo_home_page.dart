@@ -4,14 +4,11 @@ import 'package:flutter_life_record/Common/lr_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
-import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
-import 'package:flutter_life_record/Page/ToDo/Widgets/consumer_widget.dart';
-import 'package:flutter_life_record/Page/ToDo/widgets/todo_litst_card.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_details_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
-import 'package:oktoast/oktoast.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 class ToDoHomePage extends StatefulWidget {
@@ -62,14 +59,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
               ),
             ),
           ),
-          SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-            return Container(
-              padding: EdgeInsets.only(left: 14, right: 14),
-              margin: EdgeInsets.only(bottom: 5),
-              child: ToDoListCard(),
-            );
-          }, childCount: 50)),
+          todayToDoList(),
 
           SliverToBoxAdapter(
             child: SafeArea(
@@ -126,6 +116,21 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
     );
   }
 
+//今日代表
+  Obx todayToDoList() {
+    return Obx(() => SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+          var model = controller.itemList[index];
+          return Container(
+            padding: EdgeInsets.only(left: 14, right: 14),
+            margin: EdgeInsets.only(bottom: 5),
+            child: ToDoListCard(
+              model: model,
+            ),
+          );
+        }, childCount: controller.itemList.length)));
+  }
+
   //列表
   Widget todoProject() {
     return SliverToBoxAdapter(
@@ -147,28 +152,11 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
                             iconData: model.getIconData(),
                             title: model.name,
                           )
-                        : Card(
-                            elevation: 1,
-                            child: Center(
-                                child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  color: LRThemeColor.mainColor,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("创建列表")
-                              ],
-                            )),
-                            shape: LRTool.getBorderRadius(8),
-                          ),
+                        : ToDoCreateProjectCard(),
                   ),
                   onTap: () {
-                    Get.to(ToDoProjectCreatePage(
-                      model: model,
+                    Get.to(ToDoProjectDetailsPage(
+                      model!,
                     ));
                   },
                 );
@@ -177,6 +165,34 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
               scrollDirection: Axis.horizontal,
             )),
       ),
+    );
+  }
+}
+
+class ToDoCreateProjectCard extends StatelessWidget {
+  const ToDoCreateProjectCard({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 1,
+      child: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.add,
+            color: LRThemeColor.mainColor,
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text("创建列表")
+        ],
+      )),
+      shape: LRTool.getBorderRadius(8),
     );
   }
 }
