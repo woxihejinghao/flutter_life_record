@@ -155,9 +155,9 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
                         : ToDoCreateProjectCard(),
                   ),
                   onTap: () {
-                    Get.to(ToDoProjectDetailsPage(
-                      model!,
-                    ));
+                    Get.to(() => ToDoProjectDetailsPage(
+                          model!,
+                        ));
                   },
                 );
               },

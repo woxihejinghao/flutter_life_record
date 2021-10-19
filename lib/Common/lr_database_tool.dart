@@ -74,6 +74,14 @@ class LRDataBaseTool {
     }
   }
 
+  ///删除Project
+  Future deleteToDoProject(int id) async {
+    var db = await openDB();
+    await db.delete(tableToDoProject, where: "id = ?", whereArgs: [id]);
+    return await db.delete(tableToDoList,
+        where: "projectID", whereArgs: [id]); //删除相关列表的代办事项
+  }
+
   ///插入待办事项
   Future<ToDoListItemModel> insertToDoItem(ToDoListItemModel model) async {
     var db = await openDB();
@@ -105,5 +113,11 @@ class LRDataBaseTool {
         await db.query(tableToDoList, where: whereStr, whereArgs: whereArgs);
 
     return maps.map((e) => ToDoListItemModel.fromeMap(e)).toList();
+  }
+
+  ///删除代办事项
+  Future deleteToDoItem(int id) async {
+    var db = await openDB();
+    return await db.delete(tableToDoList, where: "id = ?", whereArgs: [id]);
   }
 }

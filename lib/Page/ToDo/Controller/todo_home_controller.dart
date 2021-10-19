@@ -13,7 +13,7 @@ class ToDoHomeController extends GetxController {
     refreshItemList();
   }
 
-  ///刷新待办列表
+  ///刷新列表
   refreshProjectList() async {
     var list = await LRDataBaseTool.getInstance().getToDoProjectList();
     projectList.assignAll(list);
@@ -23,5 +23,11 @@ class ToDoHomeController extends GetxController {
   refreshItemList() async {
     var list = await LRDataBaseTool.getInstance().getToDoList();
     itemList.assignAll(list);
+  }
+
+  ///删除代办项目
+  deleteProject(int id) async {
+    await LRDataBaseTool.getInstance().deleteToDoProject(id);
+    refreshProjectList();
   }
 }
