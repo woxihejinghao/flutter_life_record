@@ -1,4 +1,5 @@
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
+import 'package:flutter_life_record/Page/ToDo/Models/todo_list_record_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -30,6 +31,18 @@ class LRDataBaseTool {
       //代办列表
       await db.execute(
           "create table todo_list_item (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER,cycle INTEGER,date TEXT,time TEXT,createTime INTEGER)");
+      //完成记录表
+      await db.execute(
+          "create table todo_list_record (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,itemID INTEGER NOT NULL,name TEXT NOT NULL,finishTime INTEGER NOT NULL,remark TEXT,)");
+    }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
+      //数据库升级
+      if (newVersion <= oldVersion) {
+        return;
+      }
+      if (oldVersion == 1) {
+        //增加上次完成时间
+        db.execute("alter table $tableToDoList add lastFinishTime integer");
+      }
     });
 
     return database!;
@@ -94,6 +107,14 @@ class LRDataBaseTool {
     return model;
   }
 
+  /// 更新待办事项
+  Future updateToDoItem(ToDoListItemModel model) async {
+    var db = await openDB();
+
+    return await db.update(tableToDoList, model.toMap(),
+        where: "id = ?", whereArgs: [model.id]);
+  }
+
   ///查询待办列表
   Future<List<ToDoListItemModel>> getToDoList(
       {int? id, int? projectID, DateTime? time}) async {
@@ -115,9 +136,53 @@ class LRDataBaseTool {
     return maps.map((e) => ToDoListItemModel.fromeMap(e)).toList();
   }
 
+  ///查询待办列表（未完成）
+  Future<List<ToDoListItemModel>> queryUnfinishToDoItem(int projectID) async {
+    var db = await openDB();
+    var maps = await db.query(tableToDoList,
+        where: "projectID = ? and cycle = ?", whereArgs: [projectID, false]);
+
+    return maps.map((e) => ToDoListItemModel.fromeMap(e)).toList();
+  }
+
   ///删除代办事项
   Future deleteToDoItem(int id) async {
     var db = await openDB();
     return await db.delete(tableToDoList, where: "id = ?", whereArgs: [id]);
+  }
+
+  //插入记录
+  Future insertRecord(ToDoListItemModel model, {String? remark}) async {
+    var db = await openDB();
+
+    var recordModel = ToDoListRecordModel();
+    recordModel.name = model.name ?? "";
+    recordModel.itemID = model.id;
+    recordModel.remark = remark;
+
+    return await db.insert(ToDoRecordTable, recordModel.toMap());
+  }
+
+  ///查询记录
+  Future<List<ToDoListRecordModel>> queryRecordList({int? projetID}) async {
+    var db = await openDB();
+
+    String? whereStr;
+    List<Object?>? args;
+    if (projetID != null) {
+      whereStr = "projectID = ?";
+      args = [projetID];
+    }
+    var maps =
+        await db.query(ToDoRecordTable, where: whereStr, whereArgs: args);
+
+    return maps.map((e) => ToDoListRecordModel.fromMap(e)).toList();
+  }
+
+  ///移除记录
+  Future deleteRecord(int id) async {
+    var db = await openDB();
+
+    return db.delete(ToDoRecordTable, where: "id = ?", whereArgs: [id]);
   }
 }

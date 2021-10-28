@@ -49,13 +49,15 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                 var model = controller.itemList[index];
                 return Container(
                   padding: EdgeInsets.only(left: 14, right: 14),
-                  margin: EdgeInsets.only(top: 15),
+                  margin: EdgeInsets.only(top: 10),
                   child: Dismissible(
                       background: _deleteBackgroundWidget(),
                       key: ValueKey(model),
                       onDismissed: (d) => controller.deleteItem(model.id),
                       child: ToDoListCard(
                         model: model,
+                        isSelected: false,
+                        finishCallBack: () {},
                       )),
                 );
               }, childCount: controller.itemList.length)))

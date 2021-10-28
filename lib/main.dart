@@ -5,15 +5,19 @@ import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
 
 void main() {
-  runApp(GetMaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-        primaryColor: LRThemeColor.mainColor,
-        appBarTheme: AppBarTheme(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            iconTheme: IconThemeData(color: Colors.black))),
-    home: MyApp(),
+  runApp(OKToast(
+    child: GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          primaryColor: LRThemeColor.mainColor,
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              iconTheme: IconThemeData(color: Colors.black))),
+      home: MyApp(),
+    ),
+    textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+    radius: 8,
   ));
 }
 
@@ -36,11 +40,7 @@ class MyApp extends StatelessWidget {
     //     home: ToDoHomePage(),
     //   ),
     // );
-    return OKToast(
-      child: ToDoHomePage(),
-      textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-      radius: 8,
-    );
+    return ToDoHomePage();
   }
 }
 

@@ -14,7 +14,6 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
   String? _timeString;
   bool _cycle = false;
 
-
   DateTime? _date;
 
   @override
@@ -41,42 +40,53 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
         padding: EdgeInsets.fromLTRB(14, 20, 14, 20),
         child: Column(
           children: [
-
-            SwitchItem(title: "日期",subTitle: _dateString,isOn: _dateString != null,valueChanged: (isOn){
+            SwitchItem(
+              title: "日期",
+              subTitle: _dateString,
+              isOn: _dateString != null,
+              valueChanged: (isOn) {
                 if (isOn) {
                   selectDate();
-                }else{
+                } else {
                   setState(() {
                     _dateString = null;
                   });
                 }
-            },),
+              },
+              onTap: selectDate,
+            ),
             SizedBox(
               height: 2,
             ),
-            SwitchItem(title: "时间",subTitle: _timeString,isOn: _timeString != null,valueChanged: (isOn){
-                  if (isOn) {
-                    selectTime();
-                  }else{
-                    setState(() {
-                      _timeString = null;
-                    });
-                  }
-            },),
+            SwitchItem(
+              title: "时间",
+              subTitle: _timeString,
+              isOn: _timeString != null,
+              valueChanged: (isOn) {
+                if (isOn) {
+                  selectTime();
+                } else {
+                  setState(() {
+                    _timeString = null;
+                  });
+                }
+              },
+              onTap: selectTime,
+            ),
             SizedBox(
               height: 15,
             ),
             Offstage(
               offstage: _dateString == null,
               child: SwitchItem(
-              title: "重复",
-              isOn: _cycle,
-              valueChanged: (isOn) {
-                setState(() {
-                  _cycle = isOn;
-                });
-              },
-            ),
+                title: "重复",
+                isOn: _cycle,
+                valueChanged: (isOn) {
+                  setState(() {
+                    _cycle = isOn;
+                  });
+                },
+              ),
             )
           ],
         ),
@@ -115,6 +125,10 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
     if (result != null) {
       setState(() {
         _timeString = "${result.hour}:${result.minute}";
+        if (_dateString == null) {
+          DateTime now = DateTime.now();
+          _dateString = "${now.year}-${now.month}-${now.day}";
+        }
       });
     }
   }

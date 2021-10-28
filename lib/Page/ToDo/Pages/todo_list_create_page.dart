@@ -166,7 +166,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
   ///创建待办
   saveToDoItem() async {
-    if (_itemModel.name == null) {
+    if (_itemModel.name == null || _itemModel.name!.isEmpty) {
       showToast("请输入标题");
       return;
     }

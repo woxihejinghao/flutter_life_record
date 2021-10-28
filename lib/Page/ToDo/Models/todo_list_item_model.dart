@@ -5,6 +5,7 @@ class ToDoListItemModel {
   String? name;
   late int projectID;
   late int createTime;
+  int? lastFinishTime; //上次完成的时间
   String? remark;
   String? date;
   String? time;
@@ -24,7 +25,8 @@ class ToDoListItemModel {
       "date": date,
       "time": time,
       "cycle": cycle == true ? 1 : 0,
-      "createTime": createTime
+      "createTime": createTime,
+      "lastFinishTime": lastFinishTime
     };
 
     return map;
@@ -40,5 +42,8 @@ class ToDoListItemModel {
     date = map["date"] as String?;
     time = map["time"] as String?;
     createTime = map["createTime"] as int;
+    if (map["lastFinishTime"] is int) {
+      lastFinishTime = map["lastFinishTime"] as int;
+    }
   }
 }

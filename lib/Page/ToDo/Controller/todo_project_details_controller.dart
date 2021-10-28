@@ -14,6 +14,7 @@ class ToDoProjectDetailsController extends GetxController {
   refreshItemList() async {
     var list =
         await LRDataBaseTool.getInstance().getToDoList(projectID: projectID);
+
     itemList.assignAll(list);
   }
 
@@ -24,5 +25,10 @@ class ToDoProjectDetailsController extends GetxController {
     ///刷新今日代办
     var homeController = Get.find<ToDoHomeController>();
     homeController.refreshItemList();
+  }
+
+  updateItemFinish(ToDoListItemModel model) {
+    model.lastFinishTime = DateTime.now().microsecond;
+    refreshItemList();
   }
 }
