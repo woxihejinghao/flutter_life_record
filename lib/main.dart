@@ -1,46 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_home_page.dart';
-import 'package:get/get.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(OKToast(
-    child: GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          primaryColor: LRThemeColor.mainColor,
-          appBarTheme: AppBarTheme(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              iconTheme: IconThemeData(color: Colors.black))),
-      home: MyApp(),
-    ),
-    textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-    radius: 8,
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // return OKToast(
-    //   textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-    //   radius: 8,
-    //   child: MaterialApp(
-    //     title: 'Flutter Demo',
-    //     debugShowCheckedModeBanner: false,
-    //     theme: ThemeData(
-    //         primaryColor: LRThemeColor.mainColor,
-    //         appBarTheme: AppBarTheme(
-    //             backgroundColor: Colors.white,
-    //             foregroundColor: Colors.black,
-    //             iconTheme: IconThemeData(color: Colors.black))),
-    //     home: ToDoHomePage(),
-    //   ),
-    // );
-    return ToDoHomePage();
+    return MultiProvider(
+      providers: providers,
+      child: OKToast(
+        textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+        radius: 8,
+        child: MaterialApp(
+          navigatorKey: LRInstances.navigatorKey,
+          title: 'Flutter Demo',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+              primaryColor: LRThemeColor.mainColor,
+              appBarTheme: AppBarTheme(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  iconTheme: IconThemeData(color: Colors.black))),
+          home: ToDoHomePage(),
+        ),
+      ),
+    );
   }
 }
 

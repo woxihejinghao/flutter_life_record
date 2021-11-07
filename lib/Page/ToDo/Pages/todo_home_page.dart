@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
-import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
+
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_details_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/instance_manager.dart';
-import 'package:get/get.dart';
+import 'package:provider/src/provider.dart';
 
 class ToDoHomePage extends StatefulWidget {
   const ToDoHomePage({Key? key}) : super(key: key);
@@ -20,7 +20,6 @@ class ToDoHomePage extends StatefulWidget {
 
 class _ToDoHomePageState extends State<ToDoHomePage> {
   String timeString = "";
-  final controller = Get.put(ToDoHomeController());
   @override
   void initState() {
     var now = DateTime.now();
@@ -137,33 +136,37 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       child: Container(
         margin: EdgeInsets.fromLTRB(14, 8, 14, 8),
         height: 120,
-        child: Obx(() => ListView.builder(
-              itemBuilder: (context, index) {
-                ToDoProjectModel? model;
-                if (index != 0) {
-                  model = controller.projectList[index - 1];
-                }
-                return GestureDetector(
-                  child: SizedBox(
-                    width: 180,
-                    child: index != 0
-                        ? ToDoProjectCard(
-                            color: HexColor(model!.colorHex),
-                            iconData: model.getIconData(),
-                            title: model.name,
-                          )
-                        : ToDoCreateProjectCard(),
-                  ),
-                  onTap: () {
-                    Get.to(() => ToDoProjectDetailsPage(
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            ToDoProjectModel? model;
+            if (index != 0) {
+              model = currentContext
+                  .read<ToDoHomeProvider>()
+                  .projectList[index - 1];
+            }
+            return GestureDetector(
+              child: SizedBox(
+                width: 180,
+                child: index != 0
+                    ? ToDoProjectCard(
+                        color: HexColor(model!.colorHex),
+                        iconData: model.getIconData(),
+                        title: model.name,
+                      )
+                    : ToDoCreateProjectCard(),
+              ),
+              onTap: () {
+                navigatorState.push(MaterialPageRoute(
+                    builder: (ctx) => ToDoProjectDetailsPage(
                           model!,
-                        ));
-                  },
-                );
+                        )));
               },
-              itemCount: controller.projectList.length + 1,
-              scrollDirection: Axis.horizontal,
-            )),
+            );
+          },
+          itemCount:
+              currentContext.watch<ToDoHomeProvider>().projectList.length + 1,
+          scrollDirection: Axis.horizontal,
+        ),
       ),
     );
   }
