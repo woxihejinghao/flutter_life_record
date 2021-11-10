@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
-import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
-import 'package:flutter_life_record/Page/ToDo/Controller/todo_project_details_controller.dart';
-import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
+import 'package:flutter_life_record/Common/lr_instances.dart';
+import 'package:flutter_life_record/Common/lr_route.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/instance_manager.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
 
 class ToDoProjectDetailsPage extends StatelessWidget {
-  final ToDoProjectModel model;
-  const ToDoProjectDetailsPage(this.model, {Key? key}) : super(key: key);
+  const ToDoProjectDetailsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ToDoProjectDetailsController(this.model.id));
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             actions: [
-              _editButtonWidget(),
+              _editButtonWidget(context),
             ],
             pinned: true,
             centerTitle: false,
@@ -30,44 +29,65 @@ class ToDoProjectDetailsPage extends StatelessWidget {
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(this.model.getIconData(),
-                      color: HexColor(this.model.colorHex)),
+                  Icon(
+                      context
+                          .select((ToDoProjectDetailsProvider provider) =>
+                              provider.model)
+                          .getIconData(),
+                      color: HexColor(context
+                          .select((ToDoProjectDetailsProvider provider) =>
+                              provider.model)
+                          .colorHex)),
                   SizedBox(
                     width: 4,
                   ),
                   Text(
-                    this.model.name,
-                    style: TextStyle(color: HexColor(this.model.colorHex)),
+                    context
+                        .select((ToDoProjectDetailsProvider provider) =>
+                            provider.model)
+                        .name,
+                    style: TextStyle(
+                        color: HexColor(context
+                            .select((ToDoProjectDetailsProvider provider) =>
+                                provider.model)
+                            .colorHex)),
                   )
                 ],
               ),
               centerTitle: false,
             ),
           ),
-          Obx(() => SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                var model = controller.itemList[index];
-                return Container(
-                  padding: EdgeInsets.only(left: 14, right: 14),
-                  margin: EdgeInsets.only(top: 10),
-                  child: Dismissible(
-                      background: _deleteBackgroundWidget(),
-                      key: ValueKey(model),
-                      onDismissed: (d) => controller.deleteItem(model.id),
-                      child: ToDoListCard(
-                        model: model,
-                        isSelected: false,
-                        finishCallBack: () {},
-                      )),
-                );
-              }, childCount: controller.itemList.length)))
+          SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+            var model =
+                context.read<ToDoProjectDetailsProvider>().itemList[index];
+            return Container(
+              padding: EdgeInsets.only(left: 14, right: 14),
+              margin: EdgeInsets.only(top: 10),
+              child: Dismissible(
+                  background: _deleteBackgroundWidget(),
+                  key: ValueKey(model),
+                  onDismissed: (d) => context
+                      .read<ToDoProjectDetailsProvider>()
+                      .deleteItem(model.id),
+                  child: ToDoListCard(
+                    model: model,
+                    isSelected: false,
+                    finishCallBack: () {},
+                  )),
+            );
+          },
+                  childCount: context
+                      .watch<ToDoProjectDetailsProvider>()
+                      .itemList
+                      .length))
         ],
       ),
     );
   }
 
   //编辑按钮
-  PopupMenuButton<int> _editButtonWidget() {
+  PopupMenuButton<int> _editButtonWidget(BuildContext context) {
     return PopupMenuButton(
       child: Padding(
         padding: EdgeInsets.only(right: 10),
@@ -89,19 +109,22 @@ class ToDoProjectDetailsPage extends StatelessWidget {
       onSelected: (index) async {
         if (index == 0) {
           //修改名称外观
-          Get.to(() => ToDoProjectCreatePage(
-                model: this.model,
-              ));
+          lrPushPage(ChangeNotifierProvider.value(
+            value: context.read<ToDoProjectDetailsProvider>(),
+            child: ToDoProjectCreatePage(
+              model: context.read<ToDoProjectDetailsProvider>().model,
+            ),
+          ));
         } else if (index == 1) {
           //删除列表
           await showDialog(
-              context: Get.context!,
+              context: currentContext,
               builder: (context) => AlertDialog(
                     title: Text("提示"),
                     content: Text("是否确认删除该列表"),
                     actions: [
                       TextButton(
-                          onPressed: () => Get.back(),
+                          onPressed: () => navigatorState.pop(),
                           child: Text(
                             "取消",
                             style:
@@ -109,16 +132,20 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                           )),
                       TextButton(
                           onPressed: () async {
-                            ToDoHomeController homeController = Get.find();
-                            await homeController.deleteProject(this.model.id);
-                            Get.back();
+                            await currentContext
+                                .read<ToDoHomeProvider>()
+                                .deleteProject(currentContext
+                                    .read<ToDoProjectDetailsProvider>()
+                                    .model
+                                    .id);
+                            navigatorState.pop();
                           },
                           child: Text(
                             "确认",
                             style: TextStyle(color: LRThemeColor.mainColor),
                           ))
                     ],
-                  )).then((value) => Get.back());
+                  )).then((value) => navigatorState.pop());
         }
       },
     );
@@ -148,18 +175,5 @@ class ToDoProjectDetailsPage extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(8))),
       ),
     );
-  }
-
-  GetBuilder getItemList() {
-    return GetBuilder<ToDoProjectDetailsController>(builder: (controller) {
-      print("数量:${controller.itemList.length}");
-      return SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-        var model = controller.itemList[index];
-        return ToDoListCard(
-          model: model,
-        );
-      }, childCount: controller.itemList.length));
-    });
   }
 }

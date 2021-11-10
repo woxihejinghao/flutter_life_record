@@ -1,12 +1,18 @@
+// ignore_for_file: implementation_imports
+
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
+import 'package:flutter_life_record/Common/lr_route.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
 
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_details_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
 import 'package:provider/src/provider.dart';
@@ -70,16 +76,17 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         ],
       ),
 
-      floatingActionButton: Obx(() => FloatingActionButton(
-            onPressed: () => Get.to(() => ToDoListCreatePage()),
-            child: Icon(
-              Icons.add,
-              size: 25,
-            ),
-            backgroundColor: controller.projectList.isNotEmpty
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => lrPushPage(ToDoListCreatePage()),
+        child: Icon(
+          Icons.add,
+          size: 25,
+        ),
+        backgroundColor:
+            currentContext.read<ToDoHomeProvider>().projectList.isNotEmpty
                 ? LRThemeColor.mainColor
                 : LRThemeColor.lightTextColor,
-          )),
+      ),
 
       // floatingActionButton: Selector<ToDoHomeViewModel, bool>(
       //   selector: (context, provider) => provider.projectList.isNotEmpty,
@@ -116,18 +123,18 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
   }
 
 //今日代表
-  Obx todayToDoList() {
-    return Obx(() => SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-          var model = controller.itemList[index];
-          return Container(
-            padding: EdgeInsets.only(left: 14, right: 14),
-            margin: EdgeInsets.only(bottom: 5),
-            child: ToDoListCard(
-              model: model,
-            ),
-          );
-        }, childCount: controller.itemList.length)));
+  SliverList todayToDoList() {
+    return SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+      var model = context.read<ToDoHomeProvider>().todayItemList[index];
+      return Container(
+        padding: EdgeInsets.only(left: 14, right: 14),
+        margin: EdgeInsets.only(bottom: 5),
+        child: ToDoListCard(
+          model: model,
+        ),
+      );
+    }, childCount: context.watch<ToDoHomeProvider>().todayItemList.length));
   }
 
   //列表
@@ -140,9 +147,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
           itemBuilder: (context, index) {
             ToDoProjectModel? model;
             if (index != 0) {
-              model = currentContext
-                  .read<ToDoHomeProvider>()
-                  .projectList[index - 1];
+              model = context.read<ToDoHomeProvider>().projectList[index - 1];
             }
             return GestureDetector(
               child: SizedBox(
@@ -156,15 +161,16 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
                     : ToDoCreateProjectCard(),
               ),
               onTap: () {
-                navigatorState.push(MaterialPageRoute(
-                    builder: (ctx) => ToDoProjectDetailsPage(
-                          model!,
-                        )));
+                if (index == 0) {
+                  lrPushPage(ToDoProjectCreatePage());
+                } else {
+                  lrPushPage(buildProvider(ToDoProjectDetailsProvider(model!),
+                      child: ToDoProjectDetailsPage()));
+                }
               },
             );
           },
-          itemCount:
-              currentContext.watch<ToDoHomeProvider>().projectList.length + 1,
+          itemCount: context.watch<ToDoHomeProvider>().projectList.length + 1,
           scrollDirection: Axis.horizontal,
         ),
       ),

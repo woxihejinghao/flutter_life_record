@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
-import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_project_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/color_select_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_project_card.dart';
-import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
 
 const List colorList = [
   "#f05b72",
@@ -76,7 +79,6 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
   // 输入监听
   TextEditingController _textEditingController = TextEditingController();
 
-  final controller = Get.find<ToDoHomeController>();
   @override
   void initState() {
     super.initState();
@@ -295,11 +297,12 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
       model.colorHex = _colorHex;
       model.setIcon(icons);
       await _viewModel.updateProject(model);
+      context.read<ToDoProjectDetailsProvider>().setProjectModel(model);
     } else {
       await _viewModel.saveProject(
           _textEditingController.text, _colorHex, icons);
     }
-    controller.refreshProjectList();
+    currentContext.read<ToDoHomeProvider>().updateProjectList();
     Navigator.pop(context);
     showToast(widget.model == null ? "创建成功" : "修改成功");
   }

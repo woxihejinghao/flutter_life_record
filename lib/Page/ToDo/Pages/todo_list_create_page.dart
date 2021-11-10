@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
-import 'package:flutter_life_record/Page/ToDo/Controller/todo_home_controller.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_item_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
-import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
   final ToDoListItemModel? model;
@@ -30,12 +32,11 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
   late TextEditingController _titleEditingController;
   late TextEditingController _remarkEditingController;
-  final controller = Get.find<ToDoHomeController>();
 
   @override
   void initState() {
     super.initState();
-    _projectModel = controller.projectList.first;
+    _projectModel = currentContext.read<ToDoHomeProvider>().projectList.first;
     if (widget.model == null) {
       _itemModel = ToDoListItemModel();
       _itemModel.projectID = _projectModel?.id ?? 0;
@@ -172,7 +173,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
     }
 
     await _viewModel.saveToDoItem(_itemModel);
-    controller.refreshItemList();
+    currentContext.read<ToDoHomeProvider>().updateToDayItemList();
     Navigator.of(context).pop();
     showToast("创建成功");
   }

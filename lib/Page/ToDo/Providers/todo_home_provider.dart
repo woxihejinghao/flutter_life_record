@@ -16,6 +16,7 @@ class ToDoHomeProvider extends ChangeNotifier {
 
   ToDoHomeProvider() {
     updateProjectList();
+    updateToDayItemList();
   }
 // 刷新代办项目列表
   updateProjectList() async {
