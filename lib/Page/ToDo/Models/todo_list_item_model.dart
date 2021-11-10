@@ -11,6 +11,16 @@ class ToDoListItemModel {
   String? time;
   bool? preferential; //是否优先
   bool? cycle; //是否重复循环
+  ///上次完成的datetime
+  DateTime? get lastFinishDateTime {
+    if (lastFinishTime == null) {
+      return null;
+    }
+
+    return DateTime.fromMicrosecondsSinceEpoch(lastFinishTime!);
+  }
+
+  ///今天是否完成
 
   ToDoListItemModel() {
     createTime = DateTime.now().microsecondsSinceEpoch;
@@ -33,7 +43,9 @@ class ToDoListItemModel {
   }
 
   ToDoListItemModel.fromeMap(Map<String, Object?> map) {
-    id = map["id"] as int;
+    if (map.containsKey("id")) {
+      id = map["id"] as int;
+    }
     name = map["name"] as String;
     projectID = map["projectID"] as int;
     remark = map["remark"] as String?;

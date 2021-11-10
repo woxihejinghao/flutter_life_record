@@ -17,6 +17,15 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
   ToDoProjectDetailsProvider(ToDoProjectModel model) {
     this._model = model;
     refreshItemList();
+    refreshRecordList();
+  }
+
+  refreshRecordList() async {
+    var list = await LRDataBaseTool.getInstance().queryRecordList();
+
+    if (list.isNotEmpty) {
+      print(list.first.itemModel.name);
+    }
   }
 
   /// 刷新待办列表
@@ -37,8 +46,10 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
     currentContext.read<ToDoHomeProvider>().updateToDayItemList();
   }
 
-  updateItemFinish(ToDoListItemModel model) {
+  updateItemFinish(ToDoListItemModel model) async {
     model.lastFinishTime = DateTime.now().microsecond;
+    await LRDataBaseTool.getInstance().updateToDoItem(model);
+    await LRDataBaseTool.getInstance().insertRecord(model);
     refreshItemList();
   }
 

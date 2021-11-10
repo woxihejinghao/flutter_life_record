@@ -73,7 +73,12 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                   child: ToDoListCard(
                     model: model,
                     isSelected: false,
-                    finishCallBack: () {},
+                    finishCallBack: () {
+                      print("完成任务");
+                      context
+                          .read<ToDoProjectDetailsProvider>()
+                          .updateItemFinish(model);
+                    },
                   )),
             );
           },

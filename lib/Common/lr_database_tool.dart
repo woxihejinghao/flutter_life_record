@@ -4,6 +4,7 @@ import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
+import 'package:flutter_life_record/Extension/lr_extesion.dart';
 
 class LRDataBaseTool {
   LRDataBaseTool._();
@@ -14,7 +15,7 @@ class LRDataBaseTool {
 
   String? dbPath;
   Database? database;
-  int dbVersion = 1;
+  int dbVersion = 3;
 
   //打开数据库
   Future<Database> openDB() async {
@@ -30,10 +31,10 @@ class LRDataBaseTool {
           "create table todo_project (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,color TEXT,icon TEXT,createTime INTEGER)");
       //代办列表
       await db.execute(
-          "create table todo_list_item (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER,cycle INTEGER,date TEXT,time TEXT,createTime INTEGER)");
+          "create table todo_list_item (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER,cycle INTEGER,date TEXT,time TEXT,createTime INTEGER,lastFinishTime INTEGER)");
       //完成记录表
       await db.execute(
-          "create table todo_list_record (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,itemID INTEGER NOT NULL,name TEXT NOT NULL,finishTime INTEGER NOT NULL,remark TEXT,)");
+          "create table $ToDoRecordTable (id INTEGER PRIMARY KEY AUTOINCREMENT,todoItemJson Text NOT NULL,finishTime INTEGER NOT NULL,remark TEXT)");
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
       //数据库升级
       if (newVersion <= oldVersion) {
@@ -41,7 +42,7 @@ class LRDataBaseTool {
       }
       if (oldVersion == 1) {
         //增加上次完成时间
-        db.execute("alter table $tableToDoList add lastFinishTime integer");
+        // db.execute("alter table $tableToDoList add lastFinishTime integer");
       }
     });
 
@@ -156,8 +157,7 @@ class LRDataBaseTool {
     var db = await openDB();
 
     var recordModel = ToDoListRecordModel();
-    recordModel.name = model.name ?? "";
-    recordModel.itemID = model.id;
+    recordModel.todoItemJson = model.toMap().convertToJson();
     recordModel.remark = remark;
 
     return await db.insert(ToDoRecordTable, recordModel.toMap());
@@ -170,7 +170,7 @@ class LRDataBaseTool {
     String? whereStr;
     List<Object?>? args;
     if (projetID != null) {
-      whereStr = "projectID = ?";
+      whereStr = 'todoItemJson like "projectID":?';
       args = [projetID];
     }
     var maps =

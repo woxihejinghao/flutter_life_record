@@ -51,15 +51,23 @@ class _ToDoListCardState extends State<ToDoListCard> {
               SizedBox(
                 width: 10,
               ),
-              Text(
-                widget.model?.name ?? "",
-                style: TextStyle(
-                    fontSize: 20,
-                    color: widget.isSelected
-                        ? LRThemeColor.lightTextColor
-                        : LRThemeColor.normalTextColor,
-                    decoration:
-                        widget.isSelected ? TextDecoration.lineThrough : null),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.model?.name ?? "",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: widget.isSelected
+                            ? LRThemeColor.lightTextColor
+                            : LRThemeColor.normalTextColor,
+                        decoration: widget.isSelected
+                            ? TextDecoration.lineThrough
+                            : null),
+                  ),
+                  Text("${widget.model?.lastFinishDateTime.toString() ?? ""}")
+                ],
               )
             ],
           ),
