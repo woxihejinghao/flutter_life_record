@@ -17,7 +17,9 @@ import 'package:provider/src/provider.dart';
 
 class ToDoListCreatePage extends StatefulWidget {
   final ToDoListItemModel? model;
-  const ToDoListCreatePage({Key? key, this.model}) : super(key: key);
+  final int? projectID;
+  const ToDoListCreatePage({Key? key, this.model, this.projectID})
+      : super(key: key);
 
   @override
   _ToDoListCreatePageState createState() => _ToDoListCreatePageState();
@@ -36,7 +38,15 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
   @override
   void initState() {
     super.initState();
-    _projectModel = currentContext.read<ToDoHomeProvider>().projectList.first;
+    if (widget.projectID != null) {
+      _projectModel = currentContext
+          .read<ToDoHomeProvider>()
+          .projectList
+          .firstWhere((element) => element.id == widget.projectID);
+    } else {
+      _projectModel = currentContext.read<ToDoHomeProvider>().projectList.first;
+    }
+
     if (widget.model == null) {
       _itemModel = ToDoListItemModel();
       _itemModel.projectID = _projectModel?.id ?? 0;

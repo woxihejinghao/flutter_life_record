@@ -119,16 +119,19 @@ class LRDataBaseTool {
   ///查询待办列表
   Future<List<ToDoListItemModel>> getToDoList(
       {int? id, int? projectID, DateTime? time}) async {
-    String? whereStr;
+    String whereStr = "cycle = 1 or (cycle = 0 AND lastFinishTime IS NULL)";
     List<Object?>? whereArgs;
 
     if (id != null) {
       whereStr = "id = ?";
       whereArgs = [id];
     } else if (projectID != null) {
-      whereStr = "projectID = ?";
+      whereStr =
+          "projectID = ? AND (cycle = 1 or (cycle = 0 AND lastFinishTime IS NULL))";
       whereArgs = [projectID];
     }
+
+    // String sql = "select * $tableToDoList ";
 
     var db = await openDB();
     var maps =

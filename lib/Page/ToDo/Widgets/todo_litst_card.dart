@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
+import 'package:date_format/date_format.dart';
 
 class ToDoListCard extends StatefulWidget {
   final ToDoListItemModel? model;
@@ -66,7 +67,15 @@ class _ToDoListCardState extends State<ToDoListCard> {
                             ? TextDecoration.lineThrough
                             : null),
                   ),
-                  Text("${widget.model?.lastFinishDateTime.toString() ?? ""}")
+                  if (widget.model?.lastFinishDateTime != null)
+                    Text(
+                        "${formatDate(widget.model?.lastFinishDateTime ?? DateTime.now(), [
+                          yyyy,
+                          '-',
+                          mm,
+                          '-',
+                          dd
+                        ])}")
                 ],
               )
             ],

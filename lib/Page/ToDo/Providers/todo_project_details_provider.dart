@@ -47,7 +47,7 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
   }
 
   updateItemFinish(ToDoListItemModel model) async {
-    model.lastFinishTime = DateTime.now().microsecond;
+    model.lastFinishTime = DateTime.now().microsecondsSinceEpoch;
     await LRDataBaseTool.getInstance().updateToDoItem(model);
     await LRDataBaseTool.getInstance().insertRecord(model);
     refreshItemList();

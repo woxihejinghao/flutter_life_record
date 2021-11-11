@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
@@ -16,6 +17,15 @@ class ToDoProjectDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          onPressed: () => lrPushPage(ToDoListCreatePage(
+                projectID: context.read<ToDoProjectDetailsProvider>().model.id,
+              )),
+          child: Icon(
+            Icons.add,
+            size: 25,
+          ),
+          backgroundColor: LRThemeColor.mainColor),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
