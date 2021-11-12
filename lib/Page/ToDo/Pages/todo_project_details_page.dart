@@ -84,7 +84,6 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                     model: model,
                     isSelected: false,
                     finishCallBack: () {
-                      print("完成任务");
                       context
                           .read<ToDoProjectDetailsProvider>()
                           .updateItemFinish(model);

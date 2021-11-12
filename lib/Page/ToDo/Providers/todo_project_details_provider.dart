@@ -50,6 +50,7 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
     model.lastFinishTime = DateTime.now().microsecondsSinceEpoch;
     await LRDataBaseTool.getInstance().updateToDoItem(model);
     await LRDataBaseTool.getInstance().insertRecord(model);
+    currentContext.read<ToDoHomeProvider>().updateToDayItemList(); //更新首页数据
     refreshItemList();
   }
 
