@@ -37,8 +37,8 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
   }
 
   deleteItem(int id) async {
-    var success = await LRDataBaseTool.getInstance().deleteToDoItem(id);
-    if (success) {
+    var num = await LRDataBaseTool.getInstance().deleteToDoItem(id);
+    if (num > 0) {
       _itemList.removeWhere((element) => element.id == id);
     }
 

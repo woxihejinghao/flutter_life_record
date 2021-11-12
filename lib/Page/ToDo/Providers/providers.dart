@@ -11,6 +11,14 @@ ChangeNotifierProvider<T> buildProvider<T extends ChangeNotifier>(T value,
   );
 }
 
+ChangeNotifierProvider<T> valueProvider<T extends ChangeNotifier>(T value,
+    {Widget? child}) {
+  return ChangeNotifierProvider.value(
+    value: value,
+    child: child,
+  );
+}
+
 List<SingleChildWidget> get providers => _providers;
 
 final List<ChangeNotifierProvider<dynamic>> _providers =

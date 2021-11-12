@@ -8,6 +8,7 @@ import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_item_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
@@ -184,6 +185,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
     await _viewModel.saveToDoItem(_itemModel);
     currentContext.read<ToDoHomeProvider>().updateToDayItemList();
+    context.read<ToDoProjectDetailsProvider>().refreshItemList();
     Navigator.of(context).pop();
     showToast("创建成功");
   }

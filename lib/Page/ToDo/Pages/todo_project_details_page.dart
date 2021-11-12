@@ -4,6 +4,7 @@ import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
@@ -18,9 +19,12 @@ class ToDoProjectDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          onPressed: () => lrPushPage(ToDoListCreatePage(
-                projectID: context.read<ToDoProjectDetailsProvider>().model.id,
-              )),
+          onPressed: () => lrPushPage(
+              valueProvider(context.read<ToDoProjectDetailsProvider>(),
+                  child: ToDoListCreatePage(
+                    projectID:
+                        context.read<ToDoProjectDetailsProvider>().model.id,
+                  ))),
           child: Icon(
             Icons.add,
             size: 25,

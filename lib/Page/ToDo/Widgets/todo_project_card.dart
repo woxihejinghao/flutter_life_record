@@ -49,11 +49,14 @@ class ToDoProjectCard extends StatelessWidget {
         ),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            gradient: LinearGradient(
-                colors: [this.color.withOpacity(0.6), this.color],
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                stops: [0.1, 1.0])),
+            color: this.color
+            // gradient: LinearGradient(
+            //     colors: [this.color.withOpacity(0.6), this.color],
+            //     begin: Alignment.topRight,
+            //     end: Alignment.bottomLeft,
+            //     stops: [0.1, 1.0])
+
+            ),
       ),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
