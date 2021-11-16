@@ -15,6 +15,7 @@ import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart'
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
 
 class ToDoHomePage extends StatefulWidget {
@@ -77,7 +78,14 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () => lrPushPage(ToDoListCreatePage()),
+        onPressed: () {
+          if (context.read<ToDoHomeProvider>().projectList.isEmpty) {
+            showToast("请先创建列表");
+            return;
+          }
+          lrPushPage(valueProvider(context.read<ToDoHomeProvider>(),
+              child: ToDoListCreatePage()));
+        },
         child: Icon(
           Icons.add,
           size: 25,

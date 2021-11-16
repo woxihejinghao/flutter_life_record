@@ -17,15 +17,7 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
   ToDoProjectDetailsProvider(ToDoProjectModel model) {
     this._model = model;
     refreshItemList();
-    refreshRecordList();
-  }
-
-  refreshRecordList() async {
-    var list = await LRDataBaseTool.getInstance().queryRecordList();
-
-    if (list.isNotEmpty) {
-      print(list.first.itemModel.name);
-    }
+    // refreshRecordList();
   }
 
   /// 刷新待办列表
@@ -48,8 +40,15 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
 
   updateItemFinish(ToDoListItemModel model) async {
     model.lastFinishTime = DateTime.now().microsecondsSinceEpoch;
+
+    if (model.cycleType != 0) {
+      //如果待办事项不循环的话，插入数据
+      await LRDataBaseTool.getInstance().insertToDoItem(model);
+    }
+
+    model.finished = true;
     await LRDataBaseTool.getInstance().updateToDoItem(model);
-    await LRDataBaseTool.getInstance().insertRecord(model);
+
     currentContext.read<ToDoHomeProvider>().updateToDayItemList(); //更新首页数据
     refreshItemList();
   }

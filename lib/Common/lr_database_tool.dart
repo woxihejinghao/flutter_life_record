@@ -1,10 +1,8 @@
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
-import 'package:flutter_life_record/Page/ToDo/Models/todo_list_record_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
-import 'package:flutter_life_record/Extension/lr_extesion.dart';
 
 class LRDataBaseTool {
   LRDataBaseTool._();
@@ -15,7 +13,7 @@ class LRDataBaseTool {
 
   String? dbPath;
   Database? database;
-  int dbVersion = 3;
+  int dbVersion = 1;
 
   //打开数据库
   Future<Database> openDB() async {
@@ -31,10 +29,7 @@ class LRDataBaseTool {
           "create table todo_project (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,color TEXT,icon TEXT,createTime INTEGER)");
       //代办列表
       await db.execute(
-          "create table todo_list_item (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER,cycle INTEGER,date TEXT,time TEXT,createTime INTEGER,lastFinishTime INTEGER)");
-      //完成记录表
-      await db.execute(
-          "create table $ToDoRecordTable (id INTEGER PRIMARY KEY AUTOINCREMENT,todoItemJson Text NOT NULL,finishTime INTEGER NOT NULL,remark TEXT)");
+          "create table $tableToDoList (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER NOT NULL,date TEXT,time TEXT,createTime INTEGER,lastFinishTime INTEGER, cycleType INTEGER NOT NULL, finished INTEGER NOT NULL)");
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
       //数据库升级
       if (newVersion <= oldVersion) {
@@ -119,15 +114,14 @@ class LRDataBaseTool {
   ///查询待办列表
   Future<List<ToDoListItemModel>> getToDoList(
       {int? id, int? projectID, DateTime? time}) async {
-    String whereStr = "cycle = 1 or (cycle = 0 AND lastFinishTime IS NULL)";
+    String whereStr = "finished = false";
     List<Object?>? whereArgs;
 
     if (id != null) {
       whereStr = "id = ?";
       whereArgs = [id];
     } else if (projectID != null) {
-      whereStr =
-          "projectID = ? AND (cycle = 1 or (cycle = 0 AND lastFinishTime IS NULL))";
+      whereStr = "projectID = ? AND finished = false";
       whereArgs = [projectID];
     }
 
@@ -153,39 +147,5 @@ class LRDataBaseTool {
   Future deleteToDoItem(int id) async {
     var db = await openDB();
     return await db.delete(tableToDoList, where: "id = ?", whereArgs: [id]);
-  }
-
-  //插入记录
-  Future insertRecord(ToDoListItemModel model, {String? remark}) async {
-    var db = await openDB();
-
-    var recordModel = ToDoListRecordModel();
-    recordModel.todoItemJson = model.toMap().convertToJson();
-    recordModel.remark = remark;
-
-    return await db.insert(ToDoRecordTable, recordModel.toMap());
-  }
-
-  ///查询记录
-  Future<List<ToDoListRecordModel>> queryRecordList({int? projetID}) async {
-    var db = await openDB();
-
-    String? whereStr;
-    List<Object?>? args;
-    if (projetID != null) {
-      whereStr = 'todoItemJson like "projectID":?';
-      args = [projetID];
-    }
-    var maps =
-        await db.query(ToDoRecordTable, where: whereStr, whereArgs: args);
-
-    return maps.map((e) => ToDoListRecordModel.fromMap(e)).toList();
-  }
-
-  ///移除记录
-  Future deleteRecord(int id) async {
-    var db = await openDB();
-
-    return db.delete(ToDoRecordTable, where: "id = ?", whereArgs: [id]);
   }
 }

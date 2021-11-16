@@ -1,4 +1,5 @@
-final String tableToDoList = "todo_list_item";
+///表单-待办列表
+final String tableToDoList = "todo_list";
 
 class ToDoListItemModel {
   late int id;
@@ -7,10 +8,14 @@ class ToDoListItemModel {
   late int createTime;
   int? lastFinishTime; //上次完成的时间
   String? remark;
-  String? date;
+  String? date; //目标时间
   String? time;
-  bool? preferential; //是否优先
-  bool? cycle; //是否重复循环
+  bool preferential = false; //是否优先
+  ///循环类型 0:不循环 1:日循环 2:周循环 3:月循环 4:年循环
+  int cycleType = 0;
+
+  ///是否已经完成
+  bool finished = false;
 
   ///上次完成的datetime
   DateTime? get lastFinishDateTime {
@@ -32,12 +37,13 @@ class ToDoListItemModel {
       "projectID": projectID,
       "name": name,
       "remark": remark,
-      "preferential": preferential == true ? 1 : 0,
+      "preferential": preferential ? 1 : 0,
       "date": date,
       "time": time,
-      "cycle": cycle == true ? 1 : 0,
       "createTime": createTime,
-      "lastFinishTime": lastFinishTime
+      "lastFinishTime": lastFinishTime,
+      "cycleType": cycleType,
+      "finished": finished ? 1 : 0
     };
 
     return map;
@@ -50,13 +56,12 @@ class ToDoListItemModel {
     name = map["name"] as String;
     projectID = map["projectID"] as int;
     remark = map["remark"] as String?;
-    preferential = map["preferential"] == 1;
-    cycle = map["cycle"] == 1;
+    preferential = (map["preferential"] as int) == 1;
     date = map["date"] as String?;
     time = map["time"] as String?;
     createTime = map["createTime"] as int;
-    if (map["lastFinishTime"] is int) {
-      lastFinishTime = map["lastFinishTime"] as int;
-    }
+    cycleType = map["cycleType"] as int;
+    lastFinishTime = map["lastFinishTime"] as int?;
+    finished = (map["finished"] as int) == 1;
   }
 }

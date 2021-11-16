@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_route.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_cycle_type_select_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
+
+///重复类型
+const Map cycleTypeMap = {0: "从不", 1: "每天", 2: "每周", 3: "每月", 4: "每年"};
 
 class ToDoListTimeSelectPage extends StatefulWidget {
   const ToDoListTimeSelectPage({Key? key}) : super(key: key);
@@ -12,7 +18,7 @@ class ToDoListTimeSelectPage extends StatefulWidget {
 class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
   String? _dateString;
   String? _timeString;
-  bool _cycle = false;
+  int _cycleType = 0;
 
   DateTime? _date;
 
@@ -25,7 +31,7 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop({
-                  "cycle": _cycle,
+                  "cycleType": _cycleType,
                   "date": _date.toString(),
                   "time": _timeString
                 });
@@ -78,14 +84,18 @@ class _ToDoListTimeSelectPageState extends State<ToDoListTimeSelectPage> {
             ),
             Offstage(
               offstage: _dateString == null,
-              child: SwitchItem(
+              child: NormalListTile(
                 title: "重复",
-                isOn: _cycle,
-                valueChanged: (isOn) {
-                  setState(() {
-                    _cycle = isOn;
-                  });
-                },
+                subTitle: cycleTypeMap[_cycleType],
+                onTap: () => lrPushPage(ToDoCyclyeTypeSelectPage(
+                  selectedType: _cycleType,
+                )).then((value) {
+                  if (value != null) {
+                    setState(() {
+                      _cycleType = value;
+                    });
+                  }
+                }),
               ),
             )
           ],

@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
+import 'package:flutter_life_record/Common/lr_route.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_cycle_type_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_pro
 import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_item_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
+import 'package:flutter_life_record/Page/ToDo/Widgets/todo_datetime_item.dart';
 import 'package:oktoast/oktoast.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
@@ -36,16 +39,19 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
   late TextEditingController _titleEditingController;
   late TextEditingController _remarkEditingController;
 
+  ///隐藏循环类型选项
+  bool _hideCycleItem = true;
+
   @override
   void initState() {
     super.initState();
     if (widget.projectID != null) {
-      _projectModel = currentContext
+      _projectModel = context
           .read<ToDoHomeProvider>()
           .projectList
           .firstWhere((element) => element.id == widget.projectID);
     } else {
-      _projectModel = currentContext.read<ToDoHomeProvider>().projectList.first;
+      _projectModel = context.read<ToDoHomeProvider>().projectList.first;
     }
 
     if (widget.model == null) {
@@ -74,7 +80,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
         elevation: 0,
         actions: [
           TextButton(
-              onPressed: saveToDoItem,
+              onPressed: _saveToDoItem,
               child: Text(
                 "添加",
                 style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
@@ -88,7 +94,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              inputSection(),
+              _inputSection(),
               SizedBox(
                 height: 20,
               ),
@@ -106,29 +112,13 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
                   });
                 },
               ),
-              NormalListTile(
-                title: "时间",
-                subTitle: "${_itemModel.date ?? ""} ${_itemModel.time ?? ""}",
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ToDoListTimeSelectPage();
-                  })).then((value) {
-                    if (value is Map<String, Object?>) {
-                      Map<String, Object?> map = value;
-                      _itemModel.date = map["date"] as String?;
-                      _itemModel.time = map["time"] as String?;
-                      _itemModel.cycle = map["cycle"] as bool?;
-                      setState(() {});
-                    }
-                  });
-                },
-              ),
+              _buildTimeItem(),
               SizedBox(
                 height: 20,
               ),
               SwitchItem(
                 title: "优先",
-                isOn: _itemModel.preferential ?? false,
+                isOn: _itemModel.preferential,
                 valueChanged: (isOn) {
                   setState(() {
                     _itemModel.preferential = isOn;
@@ -142,7 +132,63 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
     );
   }
 
-  Widget inputSection() {
+  //时间
+  Widget _buildTimeItem() {
+    return Card(
+      child: Column(
+        children: [
+          ToDoDataTimeitem(
+            "日期",
+            subTitle: _itemModel.date == null ? "选择日期" : _itemModel.date!,
+            onTap: _selectDate,
+            showDelButton: _itemModel.date != null,
+            delCallBack: () => setState(() {
+              _itemModel.date = null;
+            }),
+          ),
+          ToDoDataTimeitem(
+            "时间",
+            subTitle: _itemModel.time == null ? "选择时间" : _itemModel.time!,
+            showDelButton: _itemModel.time != null,
+            onTap: _selectTime,
+            delCallBack: () => setState(() {
+              _itemModel.time = null;
+            }),
+          ),
+          Offstage(
+            offstage: _hideCycleItem,
+            child: AnimatedOpacity(
+              opacity: _itemModel.date == null ? 0 : 1,
+              duration: Duration(microseconds: 200),
+              child: NormalListTile(
+                title: "重复",
+                hideBackground: true,
+                subTitle: cycleTypeMap[_itemModel.cycleType],
+                onTap: () => lrPushPage(ToDoCyclyeTypeSelectPage(
+                  selectedType: _itemModel.cycleType,
+                )).then((value) {
+                  if (value != null) {
+                    setState(() {
+                      _itemModel.cycleType = value;
+                    });
+                  }
+                }),
+              ),
+              onEnd: () {
+                setState(() {
+                  _hideCycleItem = !_hideCycleItem;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+      shape: LRTool.getBorderRadius(8),
+    );
+  }
+
+//标题和备注
+  Widget _inputSection() {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -177,7 +223,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
   }
 
   ///创建待办
-  saveToDoItem() async {
+  _saveToDoItem() async {
     if (_itemModel.name == null || _itemModel.name!.isEmpty) {
       showToast("请输入标题");
       return;
@@ -188,5 +234,43 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
     context.read<ToDoProjectDetailsProvider>().refreshItemList();
     Navigator.of(context).pop();
     showToast("创建成功");
+  }
+
+  ///选择日期
+  _selectDate() async {
+    DateTime? dateTime = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1800, 1),
+        lastDate: DateTime(9999, 12),
+        builder: (context, child) {
+          return Theme(
+              data: ThemeData(
+                  cardColor: LRThemeColor.mainColor,
+                  primaryColorLight: LRThemeColor.mainColor,
+                  brightness: Brightness.light),
+              child: child!);
+        });
+    if (dateTime != null) {
+      setState(() {
+        _itemModel.date = "${dateTime.year}-${dateTime.month}-${dateTime.day}";
+      });
+    }
+  }
+
+  ///选择时间
+  _selectTime() async {
+    TimeOfDay initialTime = TimeOfDay.now();
+    TimeOfDay? result =
+        await showTimePicker(context: context, initialTime: initialTime);
+    if (result != null) {
+      setState(() {
+        _itemModel.time = "${result.hour}:${result.minute}";
+        if (_itemModel.date == null) {
+          DateTime now = DateTime.now();
+          _itemModel.date = "${now.year}-${now.month}-${now.day}";
+        }
+      });
+    }
   }
 }
