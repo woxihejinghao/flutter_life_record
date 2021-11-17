@@ -29,7 +29,7 @@ class LRDataBaseTool {
           "create table todo_project (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,color TEXT,icon TEXT,createTime INTEGER)");
       //代办列表
       await db.execute(
-          "create table $tableToDoList (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER NOT NULL,date TEXT,time TEXT,createTime INTEGER,lastFinishTime INTEGER, cycleType INTEGER NOT NULL, finished INTEGER NOT NULL)");
+          "create table $tableToDoList (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER NOT NULL,datetime INTEGER,createTime INTEGER,lastFinishTime INTEGER, cycleType INTEGER NOT NULL, finished INTEGER NOT NULL)");
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
       //数据库升级
       if (newVersion <= oldVersion) {

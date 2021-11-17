@@ -37,6 +37,9 @@ dependencies:
   date_format: ^2.0.4
   flutter_vibrate: ^1.3.0
 
+  flutter_localizations:
+      sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -66,6 +66,10 @@ hive_flutter
 2.12
 file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/hive_flutter-1.1.0/
 file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/hive_flutter-1.1.0/lib/
+intl
+2.12
+file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/intl-0.17.0/
+file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/intl-0.17.0/lib/
 matcher
 2.12
 file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/matcher-0.12.10/
@@ -182,6 +186,10 @@ flutter
 2.12
 file:///Users/apple/flutter/packages/flutter/
 file:///Users/apple/flutter/packages/flutter/lib/
+flutter_localizations
+2.12
+file:///Users/apple/flutter/packages/flutter_localizations/
+file:///Users/apple/flutter/packages/flutter_localizations/lib/
 flutter_test
 2.12
 file:///Users/apple/flutter/packages/flutter_test/

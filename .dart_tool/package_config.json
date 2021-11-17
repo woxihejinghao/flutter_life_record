@@ -80,6 +80,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_localizations",
+      "rootUri": "file:///Users/apple/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_picker",
       "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_picker-2.0.2",
       "packageUri": "lib/",
@@ -106,6 +112,12 @@
     {
       "name": "hive_flutter",
       "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/hive_flutter-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/intl-0.17.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -284,7 +296,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-11-12T03:50:10.592957Z",
+  "generated": "2021-11-17T03:30:29.025623Z",
   "generator": "pub",
   "generatorVersion": "2.14.0"
 }

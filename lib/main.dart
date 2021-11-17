@@ -3,6 +3,8 @@ import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_home_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +22,11 @@ class MyApp extends StatelessWidget {
         textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
         radius: 8,
         child: MaterialApp(
+          localizationsDelegates: [
+            PickerLocalizationsDelegate.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate
+          ],
           navigatorKey: LRInstances.navigatorKey,
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,

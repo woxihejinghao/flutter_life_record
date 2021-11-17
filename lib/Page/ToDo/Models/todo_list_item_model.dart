@@ -8,8 +8,8 @@ class ToDoListItemModel {
   late int createTime;
   int? lastFinishTime; //上次完成的时间
   String? remark;
-  String? date; //目标时间
-  String? time;
+  int? datetime; //目标时间
+  // String? time;
   bool preferential = false; //是否优先
   ///循环类型 0:不循环 1:日循环 2:周循环 3:月循环 4:年循环
   int cycleType = 0;
@@ -38,8 +38,7 @@ class ToDoListItemModel {
       "name": name,
       "remark": remark,
       "preferential": preferential ? 1 : 0,
-      "date": date,
-      "time": time,
+      "datetime": datetime,
       "createTime": createTime,
       "lastFinishTime": lastFinishTime,
       "cycleType": cycleType,
@@ -57,8 +56,7 @@ class ToDoListItemModel {
     projectID = map["projectID"] as int;
     remark = map["remark"] as String?;
     preferential = (map["preferential"] as int) == 1;
-    date = map["date"] as String?;
-    time = map["time"] as String?;
+    datetime = map["datetime"] as int?;
     createTime = map["createTime"] as int;
     cycleType = map["cycleType"] as int;
     lastFinishTime = map["lastFinishTime"] as int?;

@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_life_record/Common/lr_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_cycle_type_select_page.dart';
-import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_time_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
@@ -15,9 +15,13 @@ import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_item_create_viewMod
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_datetime_item.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:oktoast/oktoast.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
+
+///重复类型
+const Map cycleTypeMap = {0: "从不", 1: "每天", 2: "每周", 3: "每月", 4: "每年"};
 
 class ToDoListCreatePage extends StatefulWidget {
   final ToDoListItemModel? model;
@@ -137,28 +141,32 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
     return Card(
       child: Column(
         children: [
-          ToDoDataTimeitem(
-            "日期",
-            subTitle: _itemModel.date == null ? "选择日期" : _itemModel.date!,
-            onTap: _selectDate,
-            showDelButton: _itemModel.date != null,
-            delCallBack: () => setState(() {
-              _itemModel.date = null;
-            }),
-          ),
+          // ToDoDataTimeitem(
+          //   "日期",
+          //   subTitle: _itemModel.date == null ? "选择日期" : _itemModel.date!,
+          //   onTap: _selectDate,
+          //   showDelButton: _itemModel.date != null,
+          //   delCallBack: () => setState(() {
+          //     _itemModel.date = null;
+          //   }),
+          // ),
           ToDoDataTimeitem(
             "时间",
-            subTitle: _itemModel.time == null ? "选择时间" : _itemModel.time!,
-            showDelButton: _itemModel.time != null,
-            onTap: _selectTime,
+            subTitle: _itemModel.datetime == null
+                ? "选择时间"
+                : formatDate(
+                    DateTime.fromMicrosecondsSinceEpoch(_itemModel.datetime!),
+                    [yyyy, '/', mm, '/', dd, ' ', HH, ':', nn]),
+            showDelButton: _itemModel.datetime != null,
+            onTap: _selectDate,
             delCallBack: () => setState(() {
-              _itemModel.time = null;
+              _itemModel.datetime = null;
             }),
           ),
           Offstage(
             offstage: _hideCycleItem,
             child: AnimatedOpacity(
-              opacity: _itemModel.date == null ? 0 : 1,
+              opacity: _itemModel.datetime == null ? 0 : 1,
               duration: Duration(microseconds: 200),
               child: NormalListTile(
                 title: "重复",
@@ -238,39 +246,68 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
   ///选择日期
   _selectDate() async {
-    DateTime? dateTime = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1800, 1),
-        lastDate: DateTime(9999, 12),
-        builder: (context, child) {
-          return Theme(
-              data: ThemeData(
-                  cardColor: LRThemeColor.mainColor,
-                  primaryColorLight: LRThemeColor.mainColor,
-                  brightness: Brightness.light),
-              child: child!);
-        });
-    if (dateTime != null) {
-      setState(() {
-        _itemModel.date = "${dateTime.year}-${dateTime.month}-${dateTime.day}";
-      });
+    double height = MediaQuery.of(context).size.height * 0.25;
+    if (height > 250) {
+      height = 250;
+    } else if (height < 200) {
+      height = 200;
     }
+    Picker(
+        adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMDHM),
+        height: height,
+        title: Text("请选择时间"),
+        cancelText: "取消",
+        confirmText: "确认",
+        cancelTextStyle:
+            TextStyle(fontSize: 16, color: LRThemeColor.lightTextColor),
+        confirmTextStyle:
+            TextStyle(fontSize: 16, color: LRThemeColor.mainColor),
+        onConfirm: (picker, data) {
+          var time = (picker.adapter as DateTimePickerAdapter).value;
+          if (time != null) {
+            setState(() {
+              _itemModel.datetime = time.microsecondsSinceEpoch;
+            });
+          }
+        },
+        footer: Container(
+          color: Colors.white,
+          child: SafeArea(child: Container()),
+        )).showModal(context);
+
+    // DateTime? dateTime = await showDatePicker(
+    //     context: context,
+    //     initialDate: DateTime.now(),
+    //     firstDate: DateTime(1800, 1),
+    //     lastDate: DateTime(9999, 12),
+    //     builder: (context, child) {
+    //       return Theme(
+    //           data: ThemeData(
+    //               cardColor: LRThemeColor.mainColor,
+    //               primaryColorLight: LRThemeColor.mainColor,
+    //               brightness: Brightness.light),
+    //           child: child!);
+    //     });
+    // if (dateTime != null) {
+    //   setState(() {
+    //     _itemModel.date = "${dateTime.year}-${dateTime.month}-${dateTime.day}";
+    //   });
+    // }
   }
 
   ///选择时间
-  _selectTime() async {
-    TimeOfDay initialTime = TimeOfDay.now();
-    TimeOfDay? result =
-        await showTimePicker(context: context, initialTime: initialTime);
-    if (result != null) {
-      setState(() {
-        _itemModel.time = "${result.hour}:${result.minute}";
-        if (_itemModel.date == null) {
-          DateTime now = DateTime.now();
-          _itemModel.date = "${now.year}-${now.month}-${now.day}";
-        }
-      });
-    }
-  }
+  // _selectTime() async {
+  //   TimeOfDay initialTime = TimeOfDay.now();
+  //   TimeOfDay? result =
+  //       await showTimePicker(context: context, initialTime: initialTime);
+  //   if (result != null) {
+  //     setState(() {
+  //       _itemModel.time = "${result.hour}:${result.minute}";
+  //       if (_itemModel.date == null) {
+  //         DateTime now = DateTime.now();
+  //         _itemModel.date = "${now.year}-${now.month}-${now.day}";
+  //       }
+  //     });
+  //   }
+  // }
 }
