@@ -92,15 +92,16 @@ class LRDataBaseTool {
   }
 
   ///插入待办事项
-  Future<ToDoListItemModel> insertToDoItem(ToDoListItemModel model) async {
+  Future<int> insertToDoItem(ToDoListItemModel model) async {
     var db = await openDB();
+    var id = 0;
     try {
-      model.id = await db.insert(tableToDoList, model.toMap());
+      id = await db.insert(tableToDoList, model.toMap());
     } catch (e) {
       print("插入数据失败");
     }
 
-    return model;
+    return id;
   }
 
   /// 更新待办事项

@@ -86,9 +86,9 @@ class _ToDoListCardState extends State<ToDoListCard> {
                               ? TextDecoration.lineThrough
                               : null),
                     ),
-                    if (widget.model?.lastFinishDateTime != null)
+                    if (widget.model?.nextDateTime != null)
                       Text(
-                          "${formatDate(widget.model?.lastFinishDateTime ?? DateTime.now(), [
+                          "${formatDate(widget.model?.nextDateTime ?? DateTime.now(), [
                             yyyy,
                             '-',
                             mm,
