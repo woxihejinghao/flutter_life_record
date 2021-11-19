@@ -4,4 +4,5 @@ path_provider=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_prov
 path_provider_linux=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_linux-2.1.1/
 path_provider_macos=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_macos-2.0.2/
 path_provider_windows=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_windows-2.0.4/
+permission_handler=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler-8.3.0/
 sqflite=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/sqflite-2.0.0+4/

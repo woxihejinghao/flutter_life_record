@@ -36,6 +36,7 @@ dependencies:
   hive_flutter: ^1.1.0
   date_format: ^2.0.4
   flutter_vibrate: ^1.3.0 # 振动
+  permission_handler: ^8.3.0
   time: ^2.0.1 #日期计算
 
   flutter_localizations:

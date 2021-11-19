@@ -17,6 +17,7 @@ import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ToDoHomePage extends StatefulWidget {
   const ToDoHomePage({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
   void initState() {
     var now = DateTime.now();
     timeString = "${now.year}年 ${now.month}月 ${now.day}日";
-
+    //请求权限
     super.initState();
   }
 
@@ -139,8 +140,12 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         padding: EdgeInsets.only(left: 14, right: 14),
         margin: EdgeInsets.only(bottom: 5),
         child: ToDoListCard(
-          model: model,
-        ),
+            onTap: () => lrPushPage(ToDoListCreatePage(
+                  model: model,
+                )),
+            model: model,
+            finishCallBack: () =>
+                context.read<ToDoHomeProvider>().updateItemFinish(model)),
       );
     }, childCount: context.watch<ToDoHomeProvider>().todayItemList.length));
   }

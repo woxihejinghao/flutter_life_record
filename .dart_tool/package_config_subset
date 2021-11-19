@@ -110,6 +110,14 @@ path_provider_windows
 2.12
 file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_windows-2.0.4/
 file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_windows-2.0.4/lib/
+permission_handler
+2.12
+file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler-8.3.0/
+file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler-8.3.0/lib/
+permission_handler_platform_interface
+2.14
+file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler_platform_interface-3.7.0/
+file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler_platform_interface-3.7.0/lib/
 platform
 2.12
 file:///Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/platform-3.0.2/

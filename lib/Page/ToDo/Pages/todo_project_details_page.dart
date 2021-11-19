@@ -71,39 +71,45 @@ class ToDoProjectDetailsPage extends StatelessWidget {
               centerTitle: false,
             ),
           ),
-          SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-            var model =
-                context.read<ToDoProjectDetailsProvider>().itemList[index];
-            return Container(
-              padding: EdgeInsets.only(left: 14, right: 14),
-              margin: EdgeInsets.only(top: 10),
-              child: Dismissible(
-                  background: _deleteBackgroundWidget(),
-                  key: ValueKey(model),
-                  onDismissed: (d) => context
-                      .read<ToDoProjectDetailsProvider>()
-                      .deleteItem(model.id),
-                  child: ToDoListCard(
-                    model: model,
-                    isSelected: false,
-                    finishCallBack: () {
-                      print("完成回调");
-                      //完成回调
-                      context
-                          .read<ToDoProjectDetailsProvider>()
-                          .updateItemFinish(model);
-                    },
-                  )),
-            );
-          },
-                  childCount: context
-                      .watch<ToDoProjectDetailsProvider>()
-                      .itemList
-                      .length))
+          _buildToDoList(context)
         ],
       ),
     );
+  }
+
+//待办列表
+  SliverList _buildToDoList(BuildContext context) {
+    return SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+      var model = context.read<ToDoProjectDetailsProvider>().itemList[index];
+      return Container(
+        padding: EdgeInsets.only(left: 14, right: 14),
+        margin: EdgeInsets.only(top: 10),
+        child: Dismissible(
+            background: _deleteBackgroundWidget(),
+            key: ValueKey(model),
+            onDismissed: (d) =>
+                context.read<ToDoProjectDetailsProvider>().deleteItem(model.id),
+            child: ToDoListCard(
+              onTap: () => lrPushPage(
+                  valueProvider(context.read<ToDoProjectDetailsProvider>(),
+                      child: ToDoListCreatePage(
+                        model: model,
+                      ))),
+              model: model,
+              isSelected: false,
+              finishCallBack: () {
+                print("完成回调");
+                //完成回调
+                context
+                    .read<ToDoProjectDetailsProvider>()
+                    .updateItemFinish(model);
+              },
+            )),
+      );
+    },
+            childCount:
+                context.watch<ToDoProjectDetailsProvider>().itemList.length));
   }
 
   //编辑按钮

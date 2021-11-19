@@ -2,6 +2,7 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_database_tool.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
@@ -38,8 +39,6 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
   ToDoProjectModel? _projectModel;
 
-  ToDoItemCreateViewModel _viewModel = ToDoItemCreateViewModel();
-
   late TextEditingController _titleEditingController;
   late TextEditingController _remarkEditingController;
 
@@ -63,6 +62,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
       _itemModel.projectID = _projectModel?.id ?? 0;
     } else {
       _itemModel = widget.model!;
+      _hideCycleItem = _itemModel.datetime == null;
     }
     _titleEditingController = TextEditingController(text: _itemModel.name);
     _remarkEditingController = TextEditingController(text: _itemModel.remark);
@@ -86,7 +86,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           TextButton(
               onPressed: _saveToDoItem,
               child: Text(
-                "添加",
+                widget.model != null ? "保存" : "添加",
                 style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
               ))
         ],
@@ -236,12 +236,17 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
       showToast("请输入标题");
       return;
     }
-
-    await _viewModel.saveToDoItem(_itemModel);
+    if (widget.model == null) {
+      //插入待办事项
+      await LRDataBaseTool.getInstance().insertToDoItem(_itemModel);
+    } else {
+      //更新待办事项
+      await LRDataBaseTool.getInstance().updateToDoItem(_itemModel);
+    }
+    // 更新首页数据
     currentContext.read<ToDoHomeProvider>().updateToDayItemList();
-    context.read<ToDoProjectDetailsProvider>().refreshItemList();
+    context.read<ToDoProjectDetailsProvider?>()?.refreshItemList(); //更新待办详情
     Navigator.of(context).pop();
-    showToast("创建成功");
   }
 
   ///选择日期
@@ -266,6 +271,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           var time = (picker.adapter as DateTimePickerAdapter).value;
           if (time != null) {
             setState(() {
+              _itemModel.lastFinishTime = null;
               _itemModel.datetime = time.microsecondsSinceEpoch;
             });
           }
@@ -274,40 +280,5 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           color: Colors.white,
           child: SafeArea(child: Container()),
         )).showModal(context);
-
-    // DateTime? dateTime = await showDatePicker(
-    //     context: context,
-    //     initialDate: DateTime.now(),
-    //     firstDate: DateTime(1800, 1),
-    //     lastDate: DateTime(9999, 12),
-    //     builder: (context, child) {
-    //       return Theme(
-    //           data: ThemeData(
-    //               cardColor: LRThemeColor.mainColor,
-    //               primaryColorLight: LRThemeColor.mainColor,
-    //               brightness: Brightness.light),
-    //           child: child!);
-    //     });
-    // if (dateTime != null) {
-    //   setState(() {
-    //     _itemModel.date = "${dateTime.year}-${dateTime.month}-${dateTime.day}";
-    //   });
-    // }
   }
-
-  ///选择时间
-  // _selectTime() async {
-  //   TimeOfDay initialTime = TimeOfDay.now();
-  //   TimeOfDay? result =
-  //       await showTimePicker(context: context, initialTime: initialTime);
-  //   if (result != null) {
-  //     setState(() {
-  //       _itemModel.time = "${result.hour}:${result.minute}";
-  //       if (_itemModel.date == null) {
-  //         DateTime now = DateTime.now();
-  //         _itemModel.date = "${now.year}-${now.month}-${now.day}";
-  //       }
-  //     });
-  //   }
-  // }
 }

@@ -37,4 +37,19 @@ class ToDoHomeProvider extends ChangeNotifier {
     await LRDataBaseTool.getInstance().deleteToDoProject(id);
     updateProjectList(); //刷新列表
   }
+
+  updateItemFinish(ToDoListItemModel model) async {
+    model.lastFinishTime = model.nextDateTime?.microsecondsSinceEpoch;
+
+    if (model.cycleType != 0) {
+      //如果待办事项不循环的话，插入数据
+      var newModel = model;
+      await LRDataBaseTool.getInstance().insertToDoItem(newModel);
+    }
+
+    model.finished = true;
+    await LRDataBaseTool.getInstance().updateToDoItem(model);
+
+    updateToDayItemList();
+  }
 }

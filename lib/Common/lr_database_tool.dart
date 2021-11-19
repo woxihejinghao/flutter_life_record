@@ -115,14 +115,14 @@ class LRDataBaseTool {
   ///查询待办列表
   Future<List<ToDoListItemModel>> getToDoList(
       {int? id, int? projectID, DateTime? time}) async {
-    String whereStr = "finished = false";
+    String whereStr = "finished = 0";
     List<Object?>? whereArgs;
 
     if (id != null) {
       whereStr = "id = ?";
       whereArgs = [id];
     } else if (projectID != null) {
-      whereStr = "projectID = ? AND finished = false";
+      whereStr = "projectID = ? AND finished = 0";
       whereArgs = [projectID];
     }
 

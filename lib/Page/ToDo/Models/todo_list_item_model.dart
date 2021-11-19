@@ -1,3 +1,5 @@
+import 'package:date_format/date_format.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:time/time.dart';
 
 ///表单-待办列表
@@ -68,6 +70,30 @@ class ToDoListItemModel {
       default:
         return date;
     }
+  }
+
+  String? get dateFormatterString {
+    if (nextDateTime == null) {
+      return null;
+    }
+
+    DateTime date = nextDateTime!;
+    String str = "";
+    if (date.isToday) {
+      str = "今天";
+    } else if (date.isTomorrow) {
+      str = "明天";
+    } else if (date.wasYesterday) {
+      str = "昨天";
+    } else {
+      str = formatDate(date, [yyyy, '/', mm, '/', dd]);
+    }
+    str += " ";
+
+    if (cycleType != 0) {
+      str += cycleTypeMap[cycleType];
+    }
+    return str;
   }
 
   ///今天是否完成
