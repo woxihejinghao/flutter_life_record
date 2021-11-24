@@ -39,11 +39,10 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
   }
 
   updateItemFinish(ToDoListItemModel model) async {
-    model.lastFinishTime = model.nextDateTime?.microsecondsSinceEpoch;
-
     if (model.cycleType != 0) {
       //如果待办事项不循环的话，插入数据
       var newModel = model;
+      newModel.finishTime = model.nextDateTime?.microsecondsSinceEpoch;
       await LRDataBaseTool.getInstance().insertToDoItem(newModel);
     }
 

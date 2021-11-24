@@ -12,7 +12,6 @@ import 'package:flutter_life_record/Page/ToDo/Pages/todo_cycle_type_select_page.
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_select_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
-import 'package:flutter_life_record/Page/ToDo/ViewModel/todo_item_create_viewModel.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/normal_list_tile.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/switch_item.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_datetime_item.dart';
@@ -271,7 +270,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           var time = (picker.adapter as DateTimePickerAdapter).value;
           if (time != null) {
             setState(() {
-              _itemModel.lastFinishTime = null;
+              _itemModel.finishTime = null;
               _itemModel.datetime = time.microsecondsSinceEpoch;
             });
           }

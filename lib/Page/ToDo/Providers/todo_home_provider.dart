@@ -39,7 +39,7 @@ class ToDoHomeProvider extends ChangeNotifier {
   }
 
   updateItemFinish(ToDoListItemModel model) async {
-    model.lastFinishTime = model.nextDateTime?.microsecondsSinceEpoch;
+    model.finishTime = model.nextDateTime?.microsecondsSinceEpoch;
 
     if (model.cycleType != 0) {
       //如果待办事项不循环的话，插入数据

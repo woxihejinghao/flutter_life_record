@@ -10,7 +10,7 @@ class ToDoListItemModel {
   String? name;
   late int projectID;
   late int createTime;
-  int? lastFinishTime; //上次完成的时间
+  int? finishTime; //完成的时间
   String? remark;
   int? datetime; //目标时间
   // String? time;
@@ -27,17 +27,25 @@ class ToDoListItemModel {
       return null;
     }
     var date = DateTime.fromMicrosecondsSinceEpoch(datetime ?? 0);
-    if (lastFinishTime == null) {
-      return date;
+    DateTime lastDate;
+    if (finishTime == null) {
+      lastDate = date;
+    } else {
+      lastDate = DateTime.fromMicrosecondsSinceEpoch(finishTime ?? 0);
     }
+    //现在的时间
+    var now = DateTime.now();
 
-    var lastDate = DateTime.fromMicrosecondsSinceEpoch(lastFinishTime ?? 0);
+    var diff = lastDate.difference(now);
     switch (cycleType) {
       case 0:
-        return date;
+        return lastDate;
       case 1:
         return lastDate + 1.days;
       case 2:
+        if (diff.inDays < -7) {
+          return now + 7.days;
+        }
         return lastDate + 7.days;
       case 3: //计算下一个月
         var month = lastDate.month + 1;
@@ -73,11 +81,16 @@ class ToDoListItemModel {
   }
 
   String? get dateFormatterString {
-    if (nextDateTime == null) {
+    if (datetime == null) {
       return null;
     }
 
-    DateTime date = nextDateTime!;
+    DateTime date;
+    if (finishTime == null) {
+      date = DateTime.fromMicrosecondsSinceEpoch(datetime!);
+    } else {
+      date = DateTime.fromMicrosecondsSinceEpoch(finishTime!);
+    }
     String str = "";
     if (date.isToday) {
       str = "今天";
@@ -110,7 +123,7 @@ class ToDoListItemModel {
       "preferential": preferential ? 1 : 0,
       "datetime": datetime,
       "createTime": createTime,
-      "lastFinishTime": lastFinishTime,
+      "finishTime": finishTime,
       "cycleType": cycleType,
       "finished": finished ? 1 : 0
     };
@@ -129,7 +142,7 @@ class ToDoListItemModel {
     datetime = map["datetime"] as int?;
     createTime = map["createTime"] as int;
     cycleType = map["cycleType"] as int;
-    lastFinishTime = map["lastFinishTime"] as int?;
+    finishTime = map["finishTime"] as int?;
     finished = (map["finished"] as int) == 1;
   }
 
