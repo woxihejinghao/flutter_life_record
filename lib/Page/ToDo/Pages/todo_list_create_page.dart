@@ -151,10 +151,9 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           // ),
           ToDoDataTimeitem(
             "时间",
-            subTitle: _itemModel.datetime == null
+            subTitle: _itemModel.finishedDateTime == null
                 ? "选择时间"
-                : formatDate(
-                    DateTime.fromMicrosecondsSinceEpoch(_itemModel.datetime!),
+                : formatDate(_itemModel.finishedDateTime!,
                     [yyyy, '/', mm, '/', dd, ' ', HH, ':', nn]),
             showDelButton: _itemModel.datetime != null,
             onTap: _selectDate,
@@ -270,7 +269,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           var time = (picker.adapter as DateTimePickerAdapter).value;
           if (time != null) {
             setState(() {
-              _itemModel.finishTime = null;
+              _itemModel.finishTime = time.microsecondsSinceEpoch;
               _itemModel.datetime = time.microsecondsSinceEpoch;
             });
           }

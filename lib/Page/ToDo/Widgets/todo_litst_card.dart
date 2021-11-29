@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
-import 'package:time/time.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class ToDoListCard extends StatefulWidget {
@@ -81,16 +81,17 @@ class _ToDoListCardState extends State<ToDoListCard> {
           widget.model?.name ?? "",
           style: TextStyle(
               fontSize: 20,
+              fontWeight: FontWeight.w400,
               color: widget.isSelected
                   ? LRThemeColor.lightTextColor
-                  : LRThemeColor.normalTextColor,
+                  : Colors.black,
               decoration:
                   widget.isSelected ? TextDecoration.lineThrough : null),
         ),
         if (widget.model?.dateFormatterString != null)
           Text(
             widget.model!.dateFormatterString!,
-            style: TextStyle(color: LRThemeColor.lightTextColor, fontSize: 16),
+            style: TextStyle(color: getTextColor(), fontSize: 16),
           )
       ],
     );
@@ -123,6 +124,16 @@ class _ToDoListCardState extends State<ToDoListCard> {
           color:
               this.selected ? LRThemeColor.mainColor : LRThemeColor.lineColor),
     );
+  }
+
+  Color getTextColor() {
+    DateTime? time = widget.model?.finishedDateTime;
+    if (time == null) {
+      return LRThemeColor.normalTextColor;
+    }
+    return time.isBefore(DateTime.now())
+        ? LRThemeColor.mainColor
+        : LRThemeColor.normalTextColor;
   }
 
   @override

@@ -128,8 +128,8 @@ class LRDataBaseTool {
     // String sql = "select * $tableToDoList ";
 
     var db = await openDB();
-    var maps =
-        await db.query(tableToDoList, where: whereStr, whereArgs: whereArgs);
+    var maps = await db.query(tableToDoList,
+        where: whereStr, whereArgs: whereArgs, orderBy: "preferential DESC");
 
     return maps.map((e) => ToDoListItemModel.fromeMap(e)).toList();
   }

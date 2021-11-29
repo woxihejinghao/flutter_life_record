@@ -20,6 +20,16 @@ class ToDoListItemModel {
 
   ///是否已经完成
   bool finished = false;
+  //完成的时间
+  DateTime? get finishedDateTime {
+    if (finishTime != null) {
+      return DateTime.fromMicrosecondsSinceEpoch(finishTime!);
+    } else if (datetime != null) {
+      return DateTime.fromMicrosecondsSinceEpoch(datetime!);
+    } else {
+      return null;
+    }
+  }
 
   ///上次完成的datetime
   DateTime? get nextDateTime {

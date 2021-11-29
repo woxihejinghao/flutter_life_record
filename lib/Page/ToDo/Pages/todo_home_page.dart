@@ -17,7 +17,6 @@ import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ToDoHomePage extends StatefulWidget {
   const ToDoHomePage({Key? key}) : super(key: key);
