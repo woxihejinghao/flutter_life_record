@@ -1,9 +1,11 @@
 # This is a generated file; do not edit or check into version control.
-flutter_local_notifications=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_local_notifications-9.1.4/
+flutter_local_notifications=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_local_notifications-9.1.5/
 flutter_vibrate=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/flutter_vibrate-1.3.0/
-path_provider=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider-2.0.6/
-path_provider_linux=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_linux-2.1.1/
-path_provider_macos=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_macos-2.0.2/
+path_provider=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider-2.0.8/
+path_provider_android=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_android-2.0.9/
+path_provider_ios=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_ios-2.0.7/
+path_provider_linux=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_linux-2.1.2/
+path_provider_macos=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_macos-2.0.4/
 path_provider_windows=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/path_provider_windows-2.0.4/
 permission_handler=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/permission_handler-8.3.0/
-sqflite=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/sqflite-2.0.0+4/
+sqflite=/Users/apple/flutter/.pub-cache/hosted/pub.flutter-io.cn/sqflite-2.0.1/

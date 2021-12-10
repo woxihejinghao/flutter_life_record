@@ -127,7 +127,7 @@ class _ToDoProjectCreatePageState extends State<ToDoProjectCreatePage> {
               onPressed: onPressedButton,
               child: Text(
                 widget.model == null ? "创建" : "保存",
-                style: TextStyle(color: LRThemeColor.mainColor, fontSize: 18),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ))
         ],
       ),

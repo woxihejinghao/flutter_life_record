@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,12 +31,15 @@ class MyApp extends StatelessWidget {
           navigatorKey: LRInstances.navigatorKey,
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-              primaryColor: LRThemeColor.mainColor,
-              appBarTheme: AppBarTheme(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  iconTheme: IconThemeData(color: Colors.black))),
+          theme: FlexThemeData.light(scheme: FlexScheme.mandyRed),
+          darkTheme: FlexThemeData.dark(scheme: FlexScheme.mandyRed),
+          themeMode: ThemeMode.system,
+          // theme: ThemeData(
+          //     primaryColor: LRThemeColor.mainColor,
+          //     appBarTheme: AppBarTheme(
+          //         backgroundColor: Colors.white,
+          //         foregroundColor: Colors.black,
+          //         iconTheme: IconThemeData(color: Colors.black))),
           home: ToDoHomePage(),
         ),
       ),

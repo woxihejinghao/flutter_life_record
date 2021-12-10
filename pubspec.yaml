@@ -39,6 +39,9 @@ dependencies:
   permission_handler: ^8.3.0
   time: ^2.0.1 #日期计算
   flutter_local_notifications: ^9.1.4 #本地通知
+  flex_color_scheme: ^4.1.1 #颜色主题
+  go_router: ^2.5.2 #路由
+  
 
   flutter_localizations:
       sdk: flutter

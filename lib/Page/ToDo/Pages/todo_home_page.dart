@@ -47,7 +47,6 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 timeString,
-                style: TextStyle(color: Colors.black),
               ),
               titlePadding: EdgeInsets.fromLTRB(20, 0, 0, 20),
               centerTitle: false,
@@ -90,10 +89,6 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
           Icons.add,
           size: 25,
         ),
-        backgroundColor:
-            currentContext.read<ToDoHomeProvider>().projectList.isNotEmpty
-                ? LRThemeColor.mainColor
-                : LRThemeColor.lightTextColor,
       ),
 
       // floatingActionButton: Selector<ToDoHomeViewModel, bool>(
