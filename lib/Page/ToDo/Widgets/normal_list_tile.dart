@@ -18,8 +18,8 @@ class NormalListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: hideBackground ? null : LRTool.getBorderRadius(8),
-      elevation: hideBackground ? 0 : 1,
+      shape: hideBackground ? LRTool.getBorderRadius(0) : null,
+      elevation: hideBackground ? 0 : 2,
       margin: hideBackground ? EdgeInsets.all(1) : EdgeInsets.all(4),
       child: ListTile(
         title: Text(

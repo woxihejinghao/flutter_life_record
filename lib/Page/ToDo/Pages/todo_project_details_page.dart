@@ -28,8 +28,7 @@ class ToDoProjectDetailsPage extends StatelessWidget {
           child: Icon(
             Icons.add,
             size: 25,
-          ),
-          backgroundColor: LRThemeColor.mainColor),
+          )),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -48,10 +47,7 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                           .select((ToDoProjectDetailsProvider provider) =>
                               provider.model)
                           .getIconData(),
-                      color: HexColor(context
-                          .select((ToDoProjectDetailsProvider provider) =>
-                              provider.model)
-                          .colorHex)),
+                      color: Colors.white),
                   SizedBox(
                     width: 4,
                   ),
@@ -60,11 +56,7 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                         .select((ToDoProjectDetailsProvider provider) =>
                             provider.model)
                         .name,
-                    style: TextStyle(
-                        color: HexColor(context
-                            .select((ToDoProjectDetailsProvider provider) =>
-                                provider.model)
-                            .colorHex)),
+                    style: TextStyle(color: Colors.white),
                   )
                 ],
               ),

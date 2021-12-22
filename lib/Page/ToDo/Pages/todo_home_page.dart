@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
-import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
 import 'package:flutter_life_record/Common/lr_tool.dart';
 
@@ -15,8 +14,10 @@ import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart'
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
+import 'package:flutter_life_record/Extension/lr_extesion.dart';
 
 class ToDoHomePage extends StatefulWidget {
   const ToDoHomePage({Key? key}) : super(key: key);
@@ -42,6 +43,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         slivers: [
           SliverAppBar(
             pinned: true,
+            actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
             centerTitle: false,
             expandedHeight: 100,
             flexibleSpace: FlexibleSpaceBar(
@@ -70,12 +72,14 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
             child: SafeArea(
                 child: Container(
               alignment: Alignment.center,
-              child: Text("到底了，努力完成吧~"),
+              child: Text(
+                "到底了，努力完成吧~",
+                style: context.lrTextTheme.caption,
+              ),
             )),
           )
         ],
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (context.read<ToDoHomeProvider>().projectList.isEmpty) {
@@ -90,39 +94,24 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
           size: 25,
         ),
       ),
-
-      // floatingActionButton: Selector<ToDoHomeViewModel, bool>(
-      //   selector: (context, provider) => provider.projectList.isNotEmpty,
-      //   child: Icon(
-      //     Icons.add,
-      //     size: 25,
-      //   ),
-      //   builder: (context, value, child) {
-      //     return FloatingActionButton(
-      //       onPressed: () async {
-      //         if (!value) {
-      //           showToast("请创建列表");
-      //           return;
-      //         }
-      //         //创建
-      //         Navigator.push(
-      //             context,
-      //             MaterialPageRoute(
-      //                 builder: (context) {
-      //                   return ConsumerSingleWidget<ToDoHomeViewModel>(
-      //                       child: ToDoListCreatePage(
-      //                     model: null,
-      //                   ));
-      //                 },
-      //                 fullscreenDialog: true));
-      //       },
-      //       child: child,
-      //       backgroundColor:
-      //           value ? LRThemeColor.mainColor : LRThemeColor.lightTextColor,
-      //     );
-      //   },
-      // ),
     );
+  }
+
+  Future<void> _showNotificationWithNoBody() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', null, platformChannelSpecifics,
+        payload: 'item x');
   }
 
 //今日代表
@@ -193,14 +182,14 @@ class ToDoCreateProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 1,
+      elevation: 2,
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.add,
-            color: LRThemeColor.mainColor,
+            color: context.lrColorScheme.primary,
           ),
           SizedBox(
             height: 5,
@@ -208,7 +197,6 @@ class ToDoCreateProjectCard extends StatelessWidget {
           Text("创建列表")
         ],
       )),
-      shape: LRTool.getBorderRadius(8),
     );
   }
 }

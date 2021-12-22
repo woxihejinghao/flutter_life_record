@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter_life_record/Extension/lr_extesion.dart';
 
 class ToDoListCard extends StatefulWidget {
   final ToDoListItemModel? model;
@@ -43,6 +44,7 @@ class _ToDoListCardState extends State<ToDoListCard> {
       child: InkWell(
         onTap: widget.onTap,
         child: Card(
+          elevation: 2,
           child: Padding(
             padding: EdgeInsets.only(left: 14, bottom: 10, top: 10),
             child: Row(
@@ -56,7 +58,7 @@ class _ToDoListCardState extends State<ToDoListCard> {
                 if (widget.model!.preferential)
                   Icon(
                     Icons.star,
-                    color: Colors.amberAccent,
+                    color: context.lrColorScheme.secondaryVariant,
                   ),
                 SizedBox(
                   width: 14,
@@ -64,8 +66,6 @@ class _ToDoListCardState extends State<ToDoListCard> {
               ],
             ),
           ),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8))),
         ),
       ),
     );
@@ -79,14 +79,7 @@ class _ToDoListCardState extends State<ToDoListCard> {
       children: [
         Text(
           widget.model?.name ?? "",
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
-              color: widget.isSelected
-                  ? LRThemeColor.lightTextColor
-                  : Colors.black,
-              decoration:
-                  widget.isSelected ? TextDecoration.lineThrough : null),
+          style: context.lrTextTheme.subtitle1!.copyWith(fontSize: 18),
         ),
         if (widget.model?.dateFormatterString != null)
           Text(
@@ -127,12 +120,13 @@ class _ToDoListCardState extends State<ToDoListCard> {
   }
 
   Color getTextColor() {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     DateTime? time = widget.model?.finishedDateTime;
     if (time == null) {
       return LRThemeColor.normalTextColor;
     }
     return time.isBefore(DateTime.now())
-        ? LRThemeColor.mainColor
+        ? colorScheme.error
         : LRThemeColor.normalTextColor;
   }
 

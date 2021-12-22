@@ -58,8 +58,6 @@ class ToDoProjectCard extends StatelessWidget {
 
             ),
       ),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8))),
       elevation: 2,
     );
   }

@@ -77,6 +77,8 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final ColorScheme colorScheme = themeData.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text("创建待办事项"),
@@ -86,7 +88,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
               onPressed: _saveToDoItem,
               child: Text(
                 widget.model != null ? "保存" : "添加",
-                style: TextStyle(fontSize: 18, color: LRThemeColor.mainColor),
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ))
         ],
       ),
@@ -138,6 +140,7 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
   //时间
   Widget _buildTimeItem() {
     return Card(
+      elevation: 2,
       child: Column(
         children: [
           // ToDoDataTimeitem(
@@ -189,13 +192,12 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           ),
         ],
       ),
-      shape: LRTool.getBorderRadius(8),
     );
   }
 
 //标题和备注
   Widget _inputSection() {
-    return Card(
+    return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -204,13 +206,12 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
             maxLines: 1,
             style: TextStyle(fontSize: 18),
             decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "输入标题",
-                contentPadding: EdgeInsets.only(left: 8, right: 8)),
+              border: InputBorder.none,
+              hintText: "输入标题",
+            ),
           ),
-          Divider(
-            height: 0.5,
-            color: LRThemeColor.lineColor,
+          SizedBox(
+            height: 10,
           ),
           TextField(
             controller: _remarkEditingController,
@@ -218,13 +219,13 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
             maxLines: 5,
             style: TextStyle(fontSize: 18),
             decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "输入备注",
-                contentPadding: EdgeInsets.only(left: 8, right: 8, top: 10)),
+              border: InputBorder.none,
+              hintText: "输入备注",
+            ),
           )
         ],
       ),
-      shape: LRTool.getBorderRadius(8),
+      // shape: LRTool.getBorderRadius(8),
     );
   }
 

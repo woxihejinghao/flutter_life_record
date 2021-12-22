@@ -23,6 +23,7 @@ class SwitchItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Card(
+        elevation: 2,
         child: ListTile(
           title: Text(
             this.title,
@@ -37,12 +38,10 @@ class SwitchItem extends StatelessWidget {
                   style: TextStyle(color: LRThemeColor.mainColor),
                 ),
           trailing: CupertinoSwitch(
-            activeColor: LRThemeColor.mainColor,
             value: this.isOn,
             onChanged: this.valueChanged,
           ),
         ),
-        shape: LRTool.getBorderRadius(8),
       ),
       onTap: this.onTap,
     );
