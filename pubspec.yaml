@@ -39,6 +39,7 @@ dependencies:
   permission_handler: ^8.3.0
   time: ^2.0.1 #日期计算
   flutter_local_notifications: ^9.1.4 #本地通知
+  flutter_native_timezone: ^2.0.0
   flex_color_scheme: ^4.1.1 #颜色主题
   go_router: ^2.5.2 #路由
   
@@ -49,6 +50,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator: ^1.1.1
+  build_runner: ^2.1.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

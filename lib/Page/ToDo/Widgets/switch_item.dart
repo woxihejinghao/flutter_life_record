@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
-import 'package:flutter_life_record/Common/lr_tool.dart';
 
 class SwitchItem extends StatelessWidget {
   final String title;

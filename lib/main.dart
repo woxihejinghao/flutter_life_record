@@ -4,13 +4,26 @@ import 'package:flutter_life_record/Page/ToDo/Pages/todo_home_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox('settings');
+  await _configureLocalTimeZone();
   runApp(MyApp());
+}
+
+Future<void> _configureLocalTimeZone() async {
+  tz.initializeTimeZones();
+  final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
 
 class MyApp extends StatefulWidget {

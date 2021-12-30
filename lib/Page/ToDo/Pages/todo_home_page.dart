@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
-import 'package:flutter_life_record/Common/lr_tool.dart';
 
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/setting_drawer_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_details_page.dart';
@@ -14,7 +14,6 @@ import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart'
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:flutter_life_record/Extension/lr_extesion.dart';
@@ -39,11 +38,18 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: SettingDrawerPage(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
-            actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
+            // actions: [
+            //   IconButton(
+            //       onPressed: () {
+            //         Scaffold.of(context).openEndDrawer();
+            //       },
+            //       icon: Icon(Icons.settings))
+            // ],
             centerTitle: false,
             expandedHeight: 100,
             flexibleSpace: FlexibleSpaceBar(
@@ -95,23 +101,6 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         ),
       ),
     );
-  }
-
-  Future<void> _showNotificationWithNoBody() async {
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your channel id', 'your channel name',
-            channelDescription: 'your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', null, platformChannelSpecifics,
-        payload: 'item x');
   }
 
 //今日代表

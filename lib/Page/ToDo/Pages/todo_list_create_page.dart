@@ -5,7 +5,6 @@ import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_database_tool.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
-import 'package:flutter_life_record/Common/lr_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_cycle_type_select_page.dart';
@@ -77,8 +76,6 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final ColorScheme colorScheme = themeData.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text("创建待办事项"),
