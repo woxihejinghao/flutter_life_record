@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_life_record/Extension/lr_extesion.dart';
+import 'package:flutter_life_record/Extension/lr_extension.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -38,8 +40,7 @@ class _SettingDrawerPageState extends State<SettingDrawerPage> {
                   return _buildSwitch(
                       "早上通知", box.get("morningNotice", defaultValue: false),
                       (value) {
-                    box.put("morningNotice", value);
-                    _setNotification(value, LRNoticeType.morning);
+                    _setNotification(value, LRNoticeType.morning, box);
                   });
                 }),
             ValueListenableBuilder(
@@ -49,8 +50,7 @@ class _SettingDrawerPageState extends State<SettingDrawerPage> {
                   return _buildSwitch(
                       "中午通知", box.get("noonNotice", defaultValue: false),
                       (value) {
-                    box.put("noonNotice", value);
-                    _setNotification(value, LRNoticeType.noon);
+                    _setNotification(value, LRNoticeType.noon, box);
                   });
                 }),
             ValueListenableBuilder(
@@ -60,8 +60,7 @@ class _SettingDrawerPageState extends State<SettingDrawerPage> {
                   return _buildSwitch(
                       "晚上通知", box.get("nightNotice", defaultValue: false),
                       (value) {
-                    box.put("nightNotice", value);
-                    _setNotification(value, LRNoticeType.night);
+                    _setNotification(value, LRNoticeType.night, box);
                   });
                 }),
           ],
@@ -96,7 +95,31 @@ class _SettingDrawerPageState extends State<SettingDrawerPage> {
     );
   }
 
-  Future<void> _setNotification(bool open, LRNoticeType type) async {
+  Future<void> _setNotification(
+      bool open, LRNoticeType type, Box<dynamic> box) async {
+    if (await Permission.notification.isDenied) {
+      showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+                title: Text("是否开启通知？"),
+                content: Text("需要打开通知权限，才能正常接收通知。"),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text("取消")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        openAppSettings();
+                      },
+                      child: Text("去开启"))
+                ],
+              ));
+
+      return;
+    }
+    List names = ["morningNotice", "noonNotice", "nightNotice"];
+    box.put(names[type.index], open);
     if (open) {
       Map<String, String> content = _getNoticeContent(type);
       int hour = 20;

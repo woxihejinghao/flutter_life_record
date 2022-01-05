@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:flutter_life_record/Extension/lr_extesion.dart';
+import 'package:flutter_life_record/Extension/lr_extension.dart';
 
 class ToDoListCard extends StatefulWidget {
   final ToDoListItemModel? model;

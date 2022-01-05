@@ -14,9 +14,10 @@ import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart'
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
-import 'package:flutter_life_record/Extension/lr_extesion.dart';
+import 'package:flutter_life_record/Extension/lr_extension.dart';
 
 class ToDoHomePage extends StatefulWidget {
   const ToDoHomePage({Key? key}) : super(key: key);
@@ -88,12 +89,13 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (context.read<ToDoHomeProvider>().projectList.isEmpty) {
-            showToast("请先创建列表");
-            return;
-          }
-          lrPushPage(valueProvider(context.read<ToDoHomeProvider>(),
-              child: ToDoListCreatePage()));
+          _showNotification();
+          // if (context.read<ToDoHomeProvider>().projectList.isEmpty) {
+          //   showToast("请先创建列表");
+          //   return;
+          // }
+          // lrPushPage(valueProvider(context.read<ToDoHomeProvider>(),
+          //     child: ToDoListCreatePage()));
         },
         child: Icon(
           Icons.add,
@@ -101,6 +103,20 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
   }
 
 //今日代表

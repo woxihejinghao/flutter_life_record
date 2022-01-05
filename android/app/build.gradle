@@ -47,6 +47,28 @@ android {
         versionName flutterVersionName
     }
 
+    flavorDimensions "app"
+
+    productFlavors {
+        // 生产环境
+        flavoronline {
+            dimension "app"
+            //设置生产环境下app的名称
+            //在strings.xml中追加属性"app_name"和值"xxx"，AndroidManifest.xml中可以通过@string/app_name读取
+            resValue "string", "app_name", "记.念日"
+            //设置生产环境下的applicationId 
+            applicationId "${defaultConfig.applicationId}"
+
+
+        }
+        // 开发环境
+        flavordev {
+            dimension "app"
+            resValue "string", "app_name", "记.念日(DEV)"
+            applicationId "${defaultConfig.applicationId}.dev"
+        }
+    }
+
         signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
