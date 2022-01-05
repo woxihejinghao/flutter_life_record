@@ -22,17 +22,16 @@ import 'package:provider/src/provider.dart';
 ///重复类型
 const Map cycleTypeMap = {0: "从不", 1: "每天", 2: "每周", 3: "每月", 4: "每年"};
 
-class ToDoListCreatePage extends StatefulWidget {
+class ToDoItemCreatePage extends StatefulWidget {
   final ToDoListItemModel? model;
   final int? projectID;
-  const ToDoListCreatePage({Key? key, this.model, this.projectID})
-      : super(key: key);
+  const ToDoItemCreatePage({Key? key, this.model, this.projectID}) : super(key: key);
 
   @override
-  _ToDoListCreatePageState createState() => _ToDoListCreatePageState();
+  _ToDoItemCreatePageState createState() => _ToDoItemCreatePageState();
 }
 
-class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
+class _ToDoItemCreatePageState extends State<ToDoItemCreatePage> {
   late ToDoListItemModel _itemModel;
 
   ToDoProjectModel? _projectModel;
@@ -47,10 +46,8 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
   void initState() {
     super.initState();
     if (widget.projectID != null) {
-      _projectModel = context
-          .read<ToDoHomeProvider>()
-          .projectList
-          .firstWhere((element) => element.id == widget.projectID);
+      _projectModel =
+          context.read<ToDoHomeProvider>().projectList.firstWhere((element) => element.id == widget.projectID);
     } else {
       _projectModel = context.read<ToDoHomeProvider>().projectList.first;
     }
@@ -149,12 +146,11 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
           //     _itemModel.date = null;
           //   }),
           // ),
-          ToDoDataTimeitem(
+          ToDoDateTimeItem(
             "时间",
-            subTitle: _itemModel.finishedDateTime == null
+            subTitle: _itemModel.datetime == null
                 ? "选择时间"
-                : formatDate(_itemModel.finishedDateTime!,
-                    [yyyy, '/', mm, '/', dd, ' ', HH, ':', nn]),
+                : formatDate(_itemModel.finishedDateTime!, [yyyy, '/', mm, '/', dd, ' ', HH, ':', nn]),
             showDelButton: _itemModel.datetime != null,
             onTap: _selectDate,
             delCallBack: () => setState(() {
@@ -254,15 +250,13 @@ class _ToDoListCreatePageState extends State<ToDoListCreatePage> {
       height = 200;
     }
     Picker(
-        adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMDHM),
+        adapter: DateTimePickerAdapter(type: PickerDateTimeType.kYMDHM, isNumberMonth: true),
         height: height,
         title: Text("请选择时间"),
         cancelText: "取消",
         confirmText: "确认",
-        cancelTextStyle:
-            TextStyle(fontSize: 16, color: LRThemeColor.lightTextColor),
-        confirmTextStyle:
-            TextStyle(fontSize: 16, color: LRThemeColor.mainColor),
+        cancelTextStyle: TextStyle(fontSize: 16, color: LRThemeColor.lightTextColor),
+        confirmTextStyle: TextStyle(fontSize: 16, color: LRThemeColor.mainColor),
         onConfirm: (picker, data) {
           var time = (picker.adapter as DateTimePickerAdapter).value;
           if (time != null) {

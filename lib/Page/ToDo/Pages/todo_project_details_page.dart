@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
-import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_item_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
@@ -19,12 +19,10 @@ class ToDoProjectDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          onPressed: () => lrPushPage(
-              valueProvider(context.read<ToDoProjectDetailsProvider>(),
-                  child: ToDoListCreatePage(
-                    projectID:
-                        context.read<ToDoProjectDetailsProvider>().model.id,
-                  ))),
+          onPressed: () => lrPushPage(valueProvider(context.read<ToDoProjectDetailsProvider>(),
+              child: ToDoItemCreatePage(
+                projectID: context.read<ToDoProjectDetailsProvider>().model.id,
+              ))),
           child: Icon(
             Icons.add,
             size: 25,
@@ -42,20 +40,13 @@ class ToDoProjectDetailsPage extends StatelessWidget {
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                      context
-                          .select((ToDoProjectDetailsProvider provider) =>
-                              provider.model)
-                          .getIconData(),
+                  Icon(context.select((ToDoProjectDetailsProvider provider) => provider.model).getIconData(),
                       color: Colors.white),
                   SizedBox(
                     width: 4,
                   ),
                   Text(
-                    context
-                        .select((ToDoProjectDetailsProvider provider) =>
-                            provider.model)
-                        .name,
+                    context.select((ToDoProjectDetailsProvider provider) => provider.model).name,
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -80,28 +71,22 @@ class ToDoProjectDetailsPage extends StatelessWidget {
         child: Dismissible(
             background: _deleteBackgroundWidget(),
             key: ValueKey(model),
-            onDismissed: (d) =>
-                context.read<ToDoProjectDetailsProvider>().deleteItem(model.id),
+            onDismissed: (d) => context.read<ToDoProjectDetailsProvider>().deleteItem(model.id),
             child: ToDoListCard(
-              onTap: () => lrPushPage(
-                  valueProvider(context.read<ToDoProjectDetailsProvider>(),
-                      child: ToDoListCreatePage(
-                        model: model,
-                      ))),
+              onTap: () => lrPushPage(valueProvider(context.read<ToDoProjectDetailsProvider>(),
+                  child: ToDoItemCreatePage(
+                    model: model,
+                  ))),
               model: model,
               isSelected: false,
               finishCallBack: () {
                 print("完成回调");
                 //完成回调
-                context
-                    .read<ToDoProjectDetailsProvider>()
-                    .updateItemFinish(model);
+                context.read<ToDoProjectDetailsProvider>().updateItemFinish(model);
               },
             )),
       );
-    },
-            childCount:
-                context.watch<ToDoProjectDetailsProvider>().itemList.length));
+    }, childCount: context.watch<ToDoProjectDetailsProvider>().itemList.length));
   }
 
   //编辑按钮
@@ -145,17 +130,13 @@ class ToDoProjectDetailsPage extends StatelessWidget {
                           onPressed: () => navigatorState.pop(),
                           child: Text(
                             "取消",
-                            style:
-                                TextStyle(color: LRThemeColor.lightTextColor),
+                            style: TextStyle(color: LRThemeColor.lightTextColor),
                           )),
                       TextButton(
                           onPressed: () async {
                             await currentContext
                                 .read<ToDoHomeProvider>()
-                                .deleteProject(currentContext
-                                    .read<ToDoProjectDetailsProvider>()
-                                    .model
-                                    .id);
+                                .deleteProject(currentContext.read<ToDoProjectDetailsProvider>().model.id);
                             navigatorState.pop();
                           },
                           child: Text(
@@ -188,9 +169,7 @@ class ToDoProjectDetailsPage extends StatelessWidget {
             )
           ],
         ),
-        decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.all(Radius.circular(8))),
+        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(8))),
       ),
     );
   }

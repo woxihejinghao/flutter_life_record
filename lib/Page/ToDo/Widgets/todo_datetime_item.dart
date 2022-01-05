@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
 
-class ToDoDataTimeitem extends StatelessWidget {
+class ToDoDateTimeItem extends StatelessWidget {
   final String title;
   final String? subTitle;
   final GestureTapCallback? delCallBack;
   final GestureTapCallback? onTap;
   final bool showDelButton;
-  const ToDoDataTimeitem(this.title,
-      {Key? key,
-      this.subTitle,
-      this.delCallBack,
-      this.onTap,
-      this.showDelButton = false})
+  const ToDoDateTimeItem(this.title,
+      {Key? key, this.subTitle, this.delCallBack, this.onTap, this.showDelButton = false})
       : super(key: key);
 
   @override
@@ -30,23 +26,25 @@ class ToDoDataTimeitem extends StatelessWidget {
             if (this.subTitle != null)
               Text(
                 this.subTitle ?? "",
-                style:
-                    TextStyle(fontSize: 16, color: LRThemeColor.lightTextColor),
+                style: TextStyle(fontSize: 16, color: LRThemeColor.lightTextColor),
               ),
-            IconButton(
-                onPressed: () {
-                  if (this.showDelButton) {
-                    if (this.delCallBack != null) {
-                      this.delCallBack!();
-                    }
-                  }
-                },
-                icon: Icon(this.showDelButton
-                    ? Icons.highlight_off
-                    : Icons.keyboard_arrow_right))
+            _buildRightItem()
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildRightItem() {
+    if (this.showDelButton) {
+      return IconButton(
+        onPressed: () {
+          this.delCallBack!();
+        },
+        icon: Icon(Icons.highlight_off),
+      );
+    } else {
+      return Icon(Icons.keyboard_arrow_right);
+    }
   }
 }

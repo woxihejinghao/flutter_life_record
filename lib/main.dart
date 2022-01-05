@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_home_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
+import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -34,11 +35,30 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
     initNotification();
+    //生命周期状态监听
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    //生命周期变化
+    if (state == AppLifecycleState.resumed) {
+      print("app进入前台");
+      //刷新每日行程
+      currentContext.read<ToDoHomeProvider>().updateToDayItemList();
+    } else if (state == AppLifecycleState.inactive) {
+      print("app在前台但是不响应事件，比如电话");
+    } else if (state == AppLifecycleState.paused) {
+      print("app进入后台");
+    } else if (state == AppLifecycleState.detached) {
+      print("没有宿主视图但是flutter引擎仍然有效");
+    }
   }
 
   @override
@@ -49,6 +69,7 @@ class _MyAppState extends State<MyApp> {
         textPadding: EdgeInsets.fromLTRB(8, 4, 8, 4),
         radius: 8,
         child: MaterialApp(
+          navigatorObservers: [routerObserver],
           localizationsDelegates: [
             PickerLocalizationsDelegate.delegate,
             GlobalMaterialLocalizations.delegate,

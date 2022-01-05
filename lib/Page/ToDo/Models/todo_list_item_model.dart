@@ -1,5 +1,5 @@
 import 'package:date_format/date_format.dart';
-import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_item_create_page.dart';
 import 'package:time/time.dart';
 
 ///表单-待办列表
@@ -66,8 +66,7 @@ class ToDoListItemModel {
           year += 1;
         }
 
-        if (date.day == date.daysInMonth ||
-            date.day > _getDaysInMonth(month, year)) {
+        if (date.day == date.daysInMonth || date.day > _getDaysInMonth(month, year)) {
           //当月的最后一天 或者 当月的天数大于下个月的天数
           day = _getDaysInMonth(month, year);
         }
@@ -158,8 +157,7 @@ class ToDoListItemModel {
 
   ///获取月份的天数
   int _getDaysInMonth(int month, int year) {
-    bool isLeapYear =
-        year >= 1582 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    bool isLeapYear = year >= 1582 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
     final days = [
       31, // January
       if (isLeapYear) 29 else 28, // February

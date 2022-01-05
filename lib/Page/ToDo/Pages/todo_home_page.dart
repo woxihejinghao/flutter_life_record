@@ -2,11 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_life_record/Common/lr_color.dart';
+import 'package:flutter_life_record/Common/lr_instances.dart';
 import 'package:flutter_life_record/Common/lr_route.dart';
 
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/setting_drawer_page.dart';
-import 'package:flutter_life_record/Page/ToDo/Pages/todo_list_create_page.dart';
+import 'package:flutter_life_record/Page/ToDo/Pages/todo_item_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_create_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_details_page.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
@@ -26,7 +27,7 @@ class ToDoHomePage extends StatefulWidget {
   _ToDoHomePageState createState() => _ToDoHomePageState();
 }
 
-class _ToDoHomePageState extends State<ToDoHomePage> {
+class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
   String timeString = "";
   @override
   void initState() {
@@ -37,6 +38,28 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    //路由订阅
+    routerObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    //取消订阅
+    routerObserver.unsubscribe(this);
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    //刷新每日行程
+    currentContext.read<ToDoHomeProvider>().updateToDayItemList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: SettingDrawerPage(),
@@ -44,13 +67,6 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            // actions: [
-            //   IconButton(
-            //       onPressed: () {
-            //         Scaffold.of(context).openEndDrawer();
-            //       },
-            //       icon: Icon(Icons.settings))
-            // ],
             centerTitle: false,
             expandedHeight: 100,
             flexibleSpace: FlexibleSpaceBar(
@@ -89,13 +105,11 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showNotification();
-          // if (context.read<ToDoHomeProvider>().projectList.isEmpty) {
-          //   showToast("请先创建列表");
-          //   return;
-          // }
-          // lrPushPage(valueProvider(context.read<ToDoHomeProvider>(),
-          //     child: ToDoListCreatePage()));
+          if (context.read<ToDoHomeProvider>().projectList.isEmpty) {
+            showToast("请先创建列表");
+            return;
+          }
+          lrPushPage(valueProvider(context.read<ToDoHomeProvider>(), child: ToDoItemCreatePage()));
         },
         child: Icon(
           Icons.add,
@@ -103,20 +117,6 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         ),
       ),
     );
-  }
-
-  Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your channel id', 'your channel name',
-            channelDescription: 'your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x');
   }
 
 //今日代表
@@ -128,12 +128,11 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         padding: EdgeInsets.only(left: 14, right: 14),
         margin: EdgeInsets.only(bottom: 5),
         child: ToDoListCard(
-            onTap: () => lrPushPage(ToDoListCreatePage(
+            onTap: () => lrPushPage(ToDoItemCreatePage(
                   model: model,
                 )),
             model: model,
-            finishCallBack: () =>
-                context.read<ToDoHomeProvider>().updateItemFinish(model)),
+            finishCallBack: () => context.read<ToDoHomeProvider>().updateItemFinish(model)),
       );
     }, childCount: context.watch<ToDoHomeProvider>().todayItemList.length));
   }
@@ -145,6 +144,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
         margin: EdgeInsets.fromLTRB(14, 8, 14, 8),
         height: 120,
         child: ListView.builder(
+          physics: BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             ToDoProjectModel? model;
             if (index != 0) {
@@ -165,8 +165,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> {
                 if (index == 0) {
                   lrPushPage(ToDoProjectCreatePage());
                 } else {
-                  lrPushPage(buildProvider(ToDoProjectDetailsProvider(model!),
-                      child: ToDoProjectDetailsPage()));
+                  lrPushPage(buildProvider(ToDoProjectDetailsProvider(model!), child: ToDoProjectDetailsPage()));
                 }
               },
             );
