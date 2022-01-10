@@ -133,17 +133,12 @@ class _SettingDrawerPageState extends State<SettingDrawerPage> {
     box.put(names[type.index], open);
     if (open) {
       Map<String, String> content = _getNoticeContent(type);
-      int hour = 20;
-      if (type == LRNoticeType.morning) {
-        hour = 8;
-      } else if (type == LRNoticeType.noon) {
-        hour = 15;
-      }
+
       await flutterLocalNotificationsPlugin.zonedSchedule(
-          0,
+          type.index,
           content["title"],
           content["body"],
-          _nextInstance(hour),
+          _nextInstance(type),
           const NotificationDetails(
             android: AndroidNotificationDetails('daily notification channel id', 'daily notification channel name',
                 channelDescription: 'daily notification description'),
@@ -170,7 +165,14 @@ class _SettingDrawerPageState extends State<SettingDrawerPage> {
     }
   }
 
-  tz.TZDateTime _nextInstance(int hour) {
+  tz.TZDateTime _nextInstance(LRNoticeType type) {
+    int hour = 20;
+    if (type == LRNoticeType.morning) {
+      hour = 9;
+    } else if (type == LRNoticeType.noon) {
+      hour = 14;
+    }
+
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour);
     if (scheduledDate.isBefore(now)) {

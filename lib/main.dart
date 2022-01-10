@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             GlobalWidgetsLocalizations.delegate
           ],
           navigatorKey: LRInstances.navigatorKey,
-          title: 'Flutter Demo',
+          title: '记.念日',
           debugShowCheckedModeBanner: false,
           theme: FlexThemeData.light(
             scheme: FlexScheme.blueWhale,
@@ -147,28 +147,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   /// 初始化通知
   initNotification() async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
-            onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    final MacOSInitializationSettings initializationSettingsMacOS =
-        MacOSInitializationSettings();
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS,
-            macOS: initializationSettingsMacOS);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: selectNotification);
+        IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    final MacOSInitializationSettings initializationSettingsMacOS = MacOSInitializationSettings();
+    final InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS, macOS: initializationSettingsMacOS);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: selectNotification);
   }
 
 //收到通知
-  void onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) {}
+  void onDidReceiveLocalNotification(int id, String? title, String? body, String? payload) {}
   //点击通知
   void selectNotification(String? payload) async {}
 }
