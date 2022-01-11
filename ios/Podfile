@@ -6,7 +6,15 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-flavordev' => :debug,
+  'Debug-flavoronline' => :debug,
+  
+  'Profile-flavordev' => :release,
+  'Profile-flavoronline' => :release,
   'Profile' => :release,
+  
+  'Release-flavordev' => :release,
+  'Release-flavoronline' => :release,
   'Release' => :release,
 }
 
