@@ -13,13 +13,7 @@ class ToDoListCard extends StatefulWidget {
   final GestureTapCallback? finishCallBack;
   final GestureTapCallback? onTap;
 
-  ToDoListCard(
-      {Key? key,
-      this.model,
-      this.isSelected = false,
-      this.finishCallBack,
-      this.onTap})
-      : super(key: key);
+  ToDoListCard({Key? key, this.model, this.isSelected = false, this.finishCallBack, this.onTap}) : super(key: key);
 
   @override
   _ToDoListCardState createState() => _ToDoListCardState();
@@ -107,15 +101,13 @@ class _ToDoListCardState extends State<ToDoListCard> {
           if (widget.finishCallBack != null) {
             widget.finishCallBack!();
           }
+          if (timer.isActive) {
+            timer.cancel();
+          }
         });
       },
-      icon: Icon(
-          this.selected
-              ? Icons.check_circle_outline
-              : Icons.radio_button_unchecked_outlined,
-          size: 25,
-          color:
-              this.selected ? LRThemeColor.mainColor : LRThemeColor.lineColor),
+      icon: Icon(this.selected ? Icons.check_circle_outline : Icons.radio_button_unchecked_outlined,
+          size: 25, color: this.selected ? LRThemeColor.mainColor : LRThemeColor.lineColor),
     );
   }
 
@@ -125,9 +117,7 @@ class _ToDoListCardState extends State<ToDoListCard> {
     if (time == null) {
       return LRThemeColor.normalTextColor;
     }
-    return time.isBefore(DateTime.now())
-        ? colorScheme.error
-        : LRThemeColor.normalTextColor;
+    return time.isBefore(DateTime.now()) ? colorScheme.error : LRThemeColor.normalTextColor;
   }
 
   @override
