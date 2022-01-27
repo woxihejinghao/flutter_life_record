@@ -13,9 +13,9 @@ import 'package:flutter_life_record/Page/ToDo/Pages/todo_project_details_page.da
 import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
+import 'package:flutter_life_record/Page/ToDo/Widgets/todo_home_progress.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:flutter_life_record/Extension/lr_extension.dart';
@@ -78,6 +78,11 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
               collapseMode: CollapseMode.parallax,
             ),
           ),
+          SliverToBoxAdapter(
+            //进度条
+            child: ToDoHomeProgress(),
+          ),
+          _buildTopSection(),
           todoProject(), //项目列表
           SliverToBoxAdapter(
             //今日待办
@@ -109,11 +114,67 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
             showToast("请先创建列表");
             return;
           }
-          lrPushPage(valueProvider(context.read<ToDoHomeProvider>(), child: ToDoItemCreatePage()));
+          lrPushPage(valueProvider(context.read<ToDoHomeProvider>(),
+              child: ToDoItemCreatePage()));
         },
         child: Icon(
           Icons.add,
           size: 25,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopSection() {
+    //创建单个Item
+    Widget _buildTopItem(
+        Color backgroundColor, String title, IconData iconData) {
+      return Card(
+        child: Container(
+          child: Stack(
+            children: [
+              Positioned(
+                child: Text(
+                  title,
+                  style: context.lrTextTheme.subtitle1!
+                      .copyWith(color: Colors.white),
+                ),
+                left: 10,
+                top: 10,
+              ),
+              Positioned(
+                child: Icon(
+                  iconData,
+                  color: Colors.white,
+                ),
+                bottom: 10,
+                right: 10,
+              )
+            ],
+          ),
+          color: backgroundColor,
+        ),
+      );
+    }
+
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(left: 14, right: 14),
+        height: 80,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+                child: _buildTopItem(
+                    context.lrColorScheme.primaryVariant, "今天", Icons.today)),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+                child: _buildTopItem(context.lrColorScheme.secondaryVariant,
+                    "全部", Icons.assignment))
+          ],
         ),
       ),
     );
@@ -132,7 +193,8 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
                   model: model,
                 )),
             model: model,
-            finishCallBack: () => context.read<ToDoHomeProvider>().updateItemFinish(model)),
+            finishCallBack: () =>
+                context.read<ToDoHomeProvider>().updateItemFinish(model)),
       );
     }, childCount: context.watch<ToDoHomeProvider>().todayItemList.length));
   }
@@ -165,7 +227,8 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
                 if (index == 0) {
                   lrPushPage(ToDoProjectCreatePage());
                 } else {
-                  lrPushPage(buildProvider(ToDoProjectDetailsProvider(model!), child: ToDoProjectDetailsPage()));
+                  lrPushPage(buildProvider(ToDoProjectDetailsProvider(model!),
+                      child: ToDoProjectDetailsPage()));
                 }
               },
             );

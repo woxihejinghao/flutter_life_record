@@ -9,10 +9,10 @@ class ToDoListItemModel {
   late int id;
   String? name;
   late int projectID;
-  late int createTime;
-  int? finishTime; //完成的时间
+  late int updateTime;
+  int? finishTime; //下次完成的时间
   String? remark;
-  int? datetime; //目标时间
+  int? datetime; //初始目标时间
   // String? time;
   bool preferential = false; //是否优先
   ///循环类型 0:不循环 1:日循环 2:周循环 3:月循环 4:年循环
@@ -51,6 +51,10 @@ class ToDoListItemModel {
       case 0:
         return lastDate;
       case 1:
+        if (diff.inDays < -1) {
+          return now.copyWith(hour: lastDate.hour, minute: lastDate.minute) +
+              1.days;
+        }
         return lastDate + 1.days;
       case 2:
         if (diff.inDays < -7) {
@@ -66,7 +70,8 @@ class ToDoListItemModel {
           year += 1;
         }
 
-        if (date.day == date.daysInMonth || date.day > _getDaysInMonth(month, year)) {
+        if (date.day == date.daysInMonth ||
+            date.day > _getDaysInMonth(month, year)) {
           //当月的最后一天 或者 当月的天数大于下个月的天数
           day = _getDaysInMonth(month, year);
         }
@@ -110,7 +115,30 @@ class ToDoListItemModel {
     } else {
       str = formatDate(date, [yyyy, '/', mm, '/', dd]);
     }
-    str += " ";
+    switch (date.weekday) {
+      case 1:
+        str += "（周一）";
+        break;
+      case 2:
+        str += "（周二）";
+        break;
+      case 3:
+        str += "（周三）";
+        break;
+      case 4:
+        str += "（周四）";
+        break;
+      case 5:
+        str += "（周五）";
+        break;
+      case 6:
+        str += "（周六）";
+        break;
+      case 7:
+        str += "（周日）";
+        break;
+      default:
+    }
 
     if (cycleType != 0) {
       str += cycleTypeMap[cycleType];
@@ -121,7 +149,7 @@ class ToDoListItemModel {
   ///今天是否完成
 
   ToDoListItemModel() {
-    createTime = DateTime.now().microsecondsSinceEpoch;
+    updateTime = DateTime.now().microsecondsSinceEpoch;
   }
 
   Map<String, Object?> toMap() {
@@ -131,7 +159,7 @@ class ToDoListItemModel {
       "remark": remark,
       "preferential": preferential ? 1 : 0,
       "datetime": datetime,
-      "createTime": createTime,
+      "createTime": updateTime,
       "finishTime": finishTime,
       "cycleType": cycleType,
       "finished": finished ? 1 : 0
@@ -149,7 +177,7 @@ class ToDoListItemModel {
     remark = map["remark"] as String?;
     preferential = (map["preferential"] as int) == 1;
     datetime = map["datetime"] as int?;
-    createTime = map["createTime"] as int;
+    updateTime = map["createTime"] as int;
     cycleType = map["cycleType"] as int;
     finishTime = map["finishTime"] as int?;
     finished = (map["finished"] as int) == 1;
@@ -157,7 +185,8 @@ class ToDoListItemModel {
 
   ///获取月份的天数
   int _getDaysInMonth(int month, int year) {
-    bool isLeapYear = year >= 1582 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    bool isLeapYear =
+        year >= 1582 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
     final days = [
       31, // January
       if (isLeapYear) 29 else 28, // February

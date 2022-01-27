@@ -7,7 +7,12 @@
         {
             "name": "flutter_life_record",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flavor":"flavordev",
+            "args": [ 
+                "--flavor",
+                "flavordev"
+            ]
         },
         {
             "name": "flutter_life_record (profile mode)",

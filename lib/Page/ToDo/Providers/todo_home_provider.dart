@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_life_record/Common/lr_database_tool.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
+import 'package:time/time.dart';
 
 class ToDoHomeProvider extends ChangeNotifier {
   /// 代办项目列表
@@ -28,7 +29,12 @@ class ToDoHomeProvider extends ChangeNotifier {
   //刷新今日代办列表
   updateToDayItemList() async {
     var list = await LRDataBaseTool.getInstance().getToDoList();
-    _todayItemList = list;
+    var newList = list.where((element) {
+      DateTime time =
+          DateTime.fromMicrosecondsSinceEpoch(element.finishTime ?? 0);
+      return time.isToday;
+    }).toList();
+    _todayItemList = newList;
     notifyListeners();
   }
 

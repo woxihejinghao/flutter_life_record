@@ -29,7 +29,7 @@ class LRDataBaseTool {
           "create table todo_project (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT,color TEXT,icon TEXT,createTime INTEGER)");
       //代办列表
       await db.execute(
-          "create table $tableToDoList (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER NOT NULL,datetime INTEGER,createTime INTEGER,finishTime INTEGER, cycleType INTEGER NOT NULL, finished INTEGER NOT NULL)");
+          "create table $tableToDoList (id INTEGER PRIMARY KEY AUTOINCREMENT,projectID INTEGER NOT NULL,name TEXT NOT NULL,remark TEXT,preferential INTEGER NOT NULL,datetime INTEGER,updateTime INTEGER,finishTime INTEGER, cycleType INTEGER NOT NULL, finished INTEGER NOT NULL)");
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
       //数据库升级
       if (newVersion <= oldVersion) {
@@ -92,6 +92,7 @@ class LRDataBaseTool {
 
   ///插入待办事项
   Future<int> insertToDoItem(ToDoListItemModel model) async {
+    model.updateTime = DateTime.now().microsecondsSinceEpoch;
     var db = await openDB();
     var id = 0;
     try {
@@ -105,6 +106,7 @@ class LRDataBaseTool {
 
   /// 更新待办事项
   Future updateToDoItem(ToDoListItemModel model) async {
+    model.updateTime = DateTime.now().microsecondsSinceEpoch;
     var db = await openDB();
 
     return await db.update(tableToDoList, model.toMap(),
