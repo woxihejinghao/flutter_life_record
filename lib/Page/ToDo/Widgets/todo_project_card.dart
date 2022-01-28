@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_life_record/Extension/lr_extension.dart';
 
 class ToDoProjectCard extends StatelessWidget {
   final IconData iconData;
   final String title;
   final Color color;
+  final int? itemCount;
+
   const ToDoProjectCard(
-      {Key? key,
-      this.iconData = Icons.add,
-      this.title = "标题",
-      this.color = Colors.black})
-      : super(key: key);
+    this.title, {
+    Key? key,
+    this.itemCount,
+    this.iconData = Icons.add,
+    this.color = Colors.black,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,15 @@ class ToDoProjectCard extends StatelessWidget {
               ),
               bottom: 10,
               right: 10,
-            )
+            ),
+            if (itemCount != null)
+              Positioned(
+                child: Text("${this.itemCount}",
+                    style: context.lrTextTheme.subtitle1!
+                        .copyWith(color: Colors.white, fontSize: 30)),
+                bottom: 10,
+                left: 10,
+              )
           ],
         ),
         decoration: BoxDecoration(

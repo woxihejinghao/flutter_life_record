@@ -14,9 +14,9 @@ import 'package:flutter_life_record/Page/ToDo/Providers/providers.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_project_details_provider.dart';
 import 'package:flutter_life_record/Page/ToDo/Widgets/todo_home_progress.dart';
-import 'package:flutter_life_record/Page/ToDo/Widgets/todo_litst_card.dart';
 import 'package:flutter_life_record/Page/ToDo/widgets/todo_project_card.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:flutter_life_record/Extension/lr_extension.dart';
 
@@ -78,34 +78,23 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
               collapseMode: CollapseMode.parallax,
             ),
           ),
-          SliverToBoxAdapter(
-            //进度条
-            child: ToDoHomeProgress(),
-          ),
+          // SliverToBoxAdapter(
+          //   //进度条
+          //   child: ToDoHomeProgress(),
+          // ),
           _buildTopSection(),
-          todoProject(), //项目列表
+
           SliverToBoxAdapter(
             //今日待办
             child: Container(
-              margin: EdgeInsets.only(left: 14, bottom: 14),
+              margin: EdgeInsets.only(left: 14, bottom: 5, top: 14),
               child: Text(
-                "今日待办",
+                "我的列表",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          todayToDoList(),
-
-          SliverToBoxAdapter(
-            child: SafeArea(
-                child: Container(
-              alignment: Alignment.center,
-              child: Text(
-                "到底了，努力完成吧~",
-                style: context.lrTextTheme.caption,
-              ),
-            )),
-          )
+          _buildToDoProjectList(), //项目列表
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -128,7 +117,7 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
   Widget _buildTopSection() {
     //创建单个Item
     Widget _buildTopItem(
-        Color backgroundColor, String title, IconData iconData) {
+        Color backgroundColor, String title, IconData iconData, int num) {
       return Card(
         child: Container(
           child: Stack(
@@ -149,6 +138,15 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
                 ),
                 bottom: 10,
                 right: 10,
+              ),
+              Positioned(
+                child: Text(
+                  "$num",
+                  style: context.lrTextTheme.subtitle1!
+                      .copyWith(color: Colors.white, fontSize: 30),
+                ),
+                bottom: 10,
+                left: 10,
               )
             ],
           ),
@@ -159,70 +157,60 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
 
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(left: 14, right: 14),
+        margin: EdgeInsets.only(left: 14, right: 14, top: 14),
         height: 80,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-                child: _buildTopItem(
-                    context.lrColorScheme.primaryVariant, "今天", Icons.today)),
+                child: Selector<ToDoHomeProvider, int>(
+                    builder: (context, num, child) => _buildTopItem(
+                        context.lrColorScheme.primaryVariant,
+                        "今天",
+                        Icons.today,
+                        num),
+                    selector: (context, provider) => provider.todayNum)),
             SizedBox(
               width: 10,
             ),
             Expanded(
-                child: _buildTopItem(context.lrColorScheme.secondaryVariant,
-                    "全部", Icons.assignment))
+                child: Selector<ToDoHomeProvider, int>(
+                    builder: (context, num, child) => _buildTopItem(
+                        context.lrColorScheme.secondaryVariant,
+                        "全部",
+                        Icons.assignment,
+                        num),
+                    selector: (context, provider) => provider.totalNum)),
           ],
         ),
       ),
     );
   }
 
-//今日代表
-  SliverList todayToDoList() {
-    return SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-      var model = context.read<ToDoHomeProvider>().todayItemList[index];
-      return Container(
-        padding: EdgeInsets.only(left: 14, right: 14),
-        margin: EdgeInsets.only(bottom: 5),
-        child: ToDoListCard(
-            onTap: () => lrPushPage(ToDoItemCreatePage(
-                  model: model,
-                )),
-            model: model,
-            finishCallBack: () =>
-                context.read<ToDoHomeProvider>().updateItemFinish(model)),
-      );
-    }, childCount: context.watch<ToDoHomeProvider>().todayItemList.length));
-  }
-
   //列表
-  Widget todoProject() {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: EdgeInsets.fromLTRB(14, 8, 14, 8),
-        height: 120,
-        child: ListView.builder(
-          physics: BouncingScrollPhysics(),
-          itemBuilder: (context, index) {
+  Widget _buildToDoProjectList() {
+    return SliverPadding(
+      padding: EdgeInsets.only(left: 14, right: 14),
+      sliver: SliverGrid(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            Widget child;
             ToDoProjectModel? model;
-            if (index != 0) {
+            if (index == 0) {
+              child = ToDoCreateProjectCard();
+            } else {
               model = context.read<ToDoHomeProvider>().projectList[index - 1];
+              child = ToDoProjectCard(
+                model.name,
+                itemCount: model.itemCount,
+                color: HexColor(model.colorHex),
+                iconData: model.getIconData(),
+                // title: model.name,
+              );
             }
+
             return GestureDetector(
-              child: SizedBox(
-                width: 180,
-                child: index != 0
-                    ? ToDoProjectCard(
-                        color: HexColor(model!.colorHex),
-                        iconData: model.getIconData(),
-                        title: model.name,
-                      )
-                    : ToDoCreateProjectCard(),
-              ),
+              child: child,
               onTap: () {
                 if (index == 0) {
                   lrPushPage(ToDoProjectCreatePage());
@@ -233,10 +221,10 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
               },
             );
           },
-          itemCount: context.watch<ToDoHomeProvider>().projectList.length + 1,
-          scrollDirection: Axis.horizontal,
-        ),
-      ),
+              childCount:
+                  context.watch<ToDoHomeProvider>().projectList.length + 1),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, childAspectRatio: 4.0 / 3)),
     );
   }
 }
@@ -257,11 +245,15 @@ class ToDoCreateProjectCard extends StatelessWidget {
           Icon(
             Icons.add,
             color: context.lrColorScheme.primary,
+            size: 40,
           ),
           SizedBox(
             height: 5,
           ),
-          Text("创建列表")
+          Text(
+            "创建列表",
+            style: context.lrTextTheme.subtitle1,
+          )
         ],
       )),
     );

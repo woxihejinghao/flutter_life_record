@@ -8,12 +8,20 @@ class ToDoHomeProvider extends ChangeNotifier {
   /// 代办项目列表
   List<ToDoProjectModel> _projectList = [];
 
-  ///今日代办列表
-  List<ToDoListItemModel> _todayItemList = [];
+  /// 待办项列表
+  List<ToDoListItemModel> _itemList = [];
+
+  /// 今天代办数量
+  int _todayNum = 0;
+
+  /// 全部数量
+  int _totalNum = 0;
 
   List<ToDoProjectModel> get projectList => _projectList;
 
-  List<ToDoListItemModel> get todayItemList => _todayItemList;
+  int get todayNum => _todayNum;
+
+  int get totalNum => _totalNum;
 
   ToDoHomeProvider() {
     updateProjectList();
@@ -23,18 +31,34 @@ class ToDoHomeProvider extends ChangeNotifier {
   updateProjectList() async {
     var list = await LRDataBaseTool.getInstance().getToDoProjectList();
     _projectList = list;
-    notifyListeners();
+    _updateNum();
   }
 
   //刷新今日代办列表
   updateToDayItemList() async {
     var list = await LRDataBaseTool.getInstance().getToDoList();
+    _itemList = list;
+    _totalNum = list.length;
     var newList = list.where((element) {
       DateTime time =
           DateTime.fromMicrosecondsSinceEpoch(element.finishTime ?? 0);
       return time.isToday;
     }).toList();
-    _todayItemList = newList;
+    _todayNum = newList.length;
+    _updateNum();
+  }
+
+  ///更新数量
+  _updateNum() async {
+    _projectList.forEach((element) {
+      element.itemCount = 0;
+      _itemList.forEach((item) {
+        if (item.projectID == element.id) {
+          element.itemCount += 1;
+        }
+      });
+    });
+
     notifyListeners();
   }
 

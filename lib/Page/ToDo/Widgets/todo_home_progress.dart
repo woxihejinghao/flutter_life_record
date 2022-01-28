@@ -42,7 +42,7 @@ class ToDoHomeProgress extends StatelessWidget {
               top: 10,
             ),
             Positioned(
-              child: Text("今日完成进度"),
+              child: Text("完成进度"),
               left: 10,
               bottom: 10,
             )

@@ -159,7 +159,7 @@ class ToDoListItemModel {
       "remark": remark,
       "preferential": preferential ? 1 : 0,
       "datetime": datetime,
-      "createTime": updateTime,
+      "updateTime": updateTime,
       "finishTime": finishTime,
       "cycleType": cycleType,
       "finished": finished ? 1 : 0
@@ -177,7 +177,7 @@ class ToDoListItemModel {
     remark = map["remark"] as String?;
     preferential = (map["preferential"] as int) == 1;
     datetime = map["datetime"] as int?;
-    updateTime = map["createTime"] as int;
+    updateTime = map["updateTime"] as int;
     cycleType = map["cycleType"] as int;
     finishTime = map["finishTime"] as int?;
     finished = (map["finished"] as int) == 1;

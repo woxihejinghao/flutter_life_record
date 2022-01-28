@@ -344,7 +344,7 @@ class ProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
         height: 120,
         width: 180,
         child: ToDoProjectCard(
-          title: this.title,
+          this.title,
           iconData: this.icons,
           color: this.iconColor,
         ),

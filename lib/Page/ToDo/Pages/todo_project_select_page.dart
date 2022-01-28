@@ -38,8 +38,8 @@ class _ToDoProjectSelectPageState extends State<ToDoProjectSelectPage> {
             ToDoProjectModel model = _projectList[index];
             return GestureDetector(
               child: ToDoProjectCard(
+                model.name,
                 color: HexColor(model.colorHex),
-                title: model.name,
                 iconData: model.getIconData(),
               ),
               onTap: () {

@@ -10,6 +10,9 @@ class ToDoProjectModel {
   late String colorHex;
   late int createTime;
 
+  ///列表下的待办数量，不写入数据库
+  int itemCount = 0;
+
   setIcon(IconData iconData) {
     Map<String, Object?> map = {
       "codePoint": iconData.codePoint,
