@@ -5,6 +5,7 @@ import 'package:flutter_life_record/Page/ToDo/Models/todo_list_item_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Models/todo_project_model.dart';
 import 'package:flutter_life_record/Page/ToDo/Providers/todo_home_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:time/time.dart';
 
 class ToDoProjectDetailsProvider extends ChangeNotifier {
   List<ToDoListItemModel> _itemList = [];
@@ -22,8 +23,23 @@ class ToDoProjectDetailsProvider extends ChangeNotifier {
 
   /// 刷新待办列表
   refreshItemList() async {
-    _itemList =
-        await LRDataBaseTool.getInstance().getToDoList(projectID: model.id);
+    if (model.id == -1) {
+      //查询今天的
+      var list = await LRDataBaseTool.getInstance().getToDoList();
+      var newList = list.where((element) {
+        DateTime time =
+            DateTime.fromMicrosecondsSinceEpoch(element.finishTime ?? 0);
+        return time.isToday;
+      }).toList();
+      _itemList = newList;
+    } else if (model.id == -2) {
+      //查询全部
+      _itemList = await LRDataBaseTool.getInstance().getToDoList();
+    } else {
+      //查询指定列表下的
+      _itemList =
+          await LRDataBaseTool.getInstance().getToDoList(projectID: model.id);
+    }
 
     notifyListeners();
   }

@@ -117,41 +117,45 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
   Widget _buildTopSection() {
     //创建单个Item
     Widget _buildTopItem(
-        Color backgroundColor, String title, IconData iconData, int num) {
-      return Card(
-        child: Container(
-          child: Stack(
-            children: [
-              Positioned(
-                child: Text(
-                  title,
-                  style: context.lrTextTheme.subtitle1!
-                      .copyWith(color: Colors.white),
+        Color backgroundColor, String title, IconData iconData, int num,
+        {GestureTapCallback? tapCallback}) {
+      return GestureDetector(
+        child: Card(
+          child: Container(
+            child: Stack(
+              children: [
+                Positioned(
+                  child: Text(
+                    title,
+                    style: context.lrTextTheme.subtitle1!
+                        .copyWith(color: Colors.white),
+                  ),
+                  left: 10,
+                  top: 10,
                 ),
-                left: 10,
-                top: 10,
-              ),
-              Positioned(
-                child: Icon(
-                  iconData,
-                  color: Colors.white,
+                Positioned(
+                  child: Icon(
+                    iconData,
+                    color: Colors.white,
+                  ),
+                  bottom: 10,
+                  right: 10,
                 ),
-                bottom: 10,
-                right: 10,
-              ),
-              Positioned(
-                child: Text(
-                  "$num",
-                  style: context.lrTextTheme.subtitle1!
-                      .copyWith(color: Colors.white, fontSize: 30),
-                ),
-                bottom: 10,
-                left: 10,
-              )
-            ],
+                Positioned(
+                  child: Text(
+                    "$num",
+                    style: context.lrTextTheme.subtitle1!
+                        .copyWith(color: Colors.white, fontSize: 30),
+                  ),
+                  bottom: 10,
+                  left: 10,
+                )
+              ],
+            ),
+            color: backgroundColor,
           ),
-          color: backgroundColor,
         ),
+        onTap: tapCallback,
       );
     }
 
@@ -166,10 +170,21 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
             Expanded(
                 child: Selector<ToDoHomeProvider, int>(
                     builder: (context, num, child) => _buildTopItem(
-                        context.lrColorScheme.primaryVariant,
-                        "今天",
-                        Icons.today,
-                        num),
+                            context.lrColorScheme.primaryVariant,
+                            "今天",
+                            Icons.today,
+                            num, tapCallback: () {
+                          ToDoProjectModel projectModel = ToDoProjectModel();
+                          projectModel.id = -1;
+                          projectModel.name = "今天";
+                          projectModel.setIcon(Icons.today);
+                          projectModel.colorHex = context
+                              .lrColorScheme.primaryVariant.value
+                              .toRadixString(16);
+                          lrPushPage(buildProvider(
+                              ToDoProjectDetailsProvider(projectModel),
+                              child: ToDoProjectDetailsPage()));
+                        }),
                     selector: (context, provider) => provider.todayNum)),
             SizedBox(
               width: 10,
@@ -177,10 +192,21 @@ class _ToDoHomePageState extends State<ToDoHomePage> with RouteAware {
             Expanded(
                 child: Selector<ToDoHomeProvider, int>(
                     builder: (context, num, child) => _buildTopItem(
-                        context.lrColorScheme.secondaryVariant,
-                        "全部",
-                        Icons.assignment,
-                        num),
+                            context.lrColorScheme.secondaryVariant,
+                            "全部",
+                            Icons.assignment,
+                            num, tapCallback: () {
+                          ToDoProjectModel projectModel = ToDoProjectModel();
+                          projectModel.id = -2;
+                          projectModel.name = "全部";
+                          projectModel.setIcon(Icons.assignment);
+                          projectModel.colorHex = context
+                              .lrColorScheme.secondaryVariant.value
+                              .toRadixString(16);
+                          lrPushPage(buildProvider(
+                              ToDoProjectDetailsProvider(projectModel),
+                              child: ToDoProjectDetailsPage()));
+                        }),
                     selector: (context, provider) => provider.totalNum)),
           ],
         ),
